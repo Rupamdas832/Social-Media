@@ -5,3 +5,5 @@ export { Notification } from "./Notification";
 export { Signup } from "./Signup";
 export { Timeline } from "./Timeline";
 export { PageNotFound } from "./PageNotFound";
+export { ProfileEdit } from "./ProfileEdit";
+export { ComposePost } from "./ComposePost";
