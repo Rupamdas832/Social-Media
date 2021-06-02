@@ -1,23 +1,30 @@
 import { Avatar } from "@chakra-ui/avatar";
 import { Button } from "@chakra-ui/button";
-import { FormHelperText } from "@chakra-ui/form-control";
 import { FormLabel } from "@chakra-ui/form-control";
 import { FormControl } from "@chakra-ui/form-control";
 import { Image } from "@chakra-ui/image";
 import { Input } from "@chakra-ui/input";
-import { Text } from "@chakra-ui/layout";
 import { Box } from "@chakra-ui/layout";
 import { Flex } from "@chakra-ui/layout";
 import { Textarea } from "@chakra-ui/textarea";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { editProfile } from "../features/user/userSlice";
 
 export const ProfileEdit = () => {
-  const [name, setName] = useState("Rupam Das");
-  const [bio, setBio] = useState(
-    "Web Developer • JavaScript • React • Coding with neogcamp | Unreal Engine 4 • Game Design | Loves travelling"
-  );
-  const [website, setWebsite] = useState("https://rupamdasportfolio.com");
+  const { user } = useSelector((state) => state.user);
+  const [name, setName] = useState(user.name);
+  const [bio, setBio] = useState(user.bio);
+  const [website, setWebsite] = useState(user.website);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const changeProfileHandler = () => {
+    dispatch(editProfile({ name: name, bio: bio, website: website }));
+    navigate("/timeline");
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -40,7 +47,7 @@ export const ProfileEdit = () => {
       >
         <Box h="150px" w="100%" bg="red.200">
           <Image
-            src="https://images.unsplash.com/photo-1620825937374-87fc7d6bddc2?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjV8fGNvZGVyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            src={user.coverImg}
             alt="Segun Adebayo"
             h="100%"
             w="100%"
@@ -51,7 +58,7 @@ export const ProfileEdit = () => {
           <Avatar
             size="xl"
             name="Christian Nwamba"
-            src="https://bit.ly/code-beast"
+            src={user.profileImg}
             mt="-5"
             border="2px"
             borderColor="white"
@@ -77,11 +84,14 @@ export const ProfileEdit = () => {
             onChange={(e) => setWebsite(e.target.value)}
           />
         </FormControl>
-        <Link to="/timeline">
-          <Button colorScheme="teal" variant="solid" my="5">
-            Save
-          </Button>
-        </Link>
+        <Button
+          colorScheme="teal"
+          variant="solid"
+          my="5"
+          onClick={() => changeProfileHandler()}
+        >
+          Save
+        </Button>
       </Flex>
     </Flex>
   );

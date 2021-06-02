@@ -1,18 +1,24 @@
 import { Button } from "@chakra-ui/button";
 import { Box } from "@chakra-ui/layout";
-import { Heading } from "@chakra-ui/layout";
 import { Spacer } from "@chakra-ui/layout";
 import { Text } from "@chakra-ui/layout";
-import { Center, Flex, Square } from "@chakra-ui/layout";
+import { Flex } from "@chakra-ui/layout";
 import { MenuList } from "@chakra-ui/menu";
 import { MenuItem } from "@chakra-ui/menu";
 import { MenuButton } from "@chakra-ui/menu";
 import { Menu } from "@chakra-ui/menu";
 import React from "react";
 import { IoSettingsOutline } from "react-icons/io5";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { logoutUser } from "../features/user/userSlice";
 
 export const Header = () => {
+  const dispatch = useDispatch();
+
+  const logoutHandler = () => {
+    dispatch(logoutUser());
+  };
   return (
     <Flex
       justify="center"
@@ -31,7 +37,9 @@ export const Header = () => {
         w={["100%", "100%", "60%", "60%"]}
       >
         <Box>
-          <Heading size="md">Grader</Heading>
+          <Text fontSize="3xl" fontWeight="medium" fontFamily="cursive">
+            Grader
+          </Text>
         </Box>
         <Spacer />
         <Menu>
@@ -44,7 +52,7 @@ export const Header = () => {
             </Link>
             <MenuItem>Theme</MenuItem>
             <Link to="/login">
-              <MenuItem>Logout</MenuItem>
+              <MenuItem onClick={() => logoutHandler()}>Logout</MenuItem>
             </Link>
           </MenuList>
         </Menu>

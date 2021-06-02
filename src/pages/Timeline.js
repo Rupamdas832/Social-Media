@@ -1,16 +1,34 @@
 import { Avatar } from "@chakra-ui/avatar";
 import { Image } from "@chakra-ui/image";
-import { Spacer } from "@chakra-ui/layout";
-import { Text } from "@chakra-ui/layout";
-import { Box } from "@chakra-ui/layout";
-import { Flex } from "@chakra-ui/layout";
+import { Text, Box, Flex, Spacer, Divider } from "@chakra-ui/layout";
 import { FcLike, FcLikePlaceholder } from "react-icons/fc";
-import { AiOutlineRetweet } from "react-icons/ai";
 import { FaRegComment, FaRetweet } from "react-icons/fa";
 import React, { useEffect } from "react";
-import { Divider } from "@chakra-ui/layout";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { increment } from "../features/posts/postsSlice";
 
 export const Timeline = () => {
+  const { user } = useSelector((state) => state.user);
+  const { userId, name, followers, following, profileImg, coverImg, bio } =
+    user;
+
+  const { posts } = useSelector((state) => state.posts);
+
+  const dispatch = useDispatch();
+
+  const likeHandler = (isLiked, _id) => {
+    if (isLiked === undefined) {
+      const newLike = {
+        userId: userId,
+      };
+      dispatch(increment({ newLike: newLike, postId: _id }));
+    }
+  };
+
+  let userPosts = [];
+  userPosts = posts.filter((post) => post.userId === userId);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -30,9 +48,9 @@ export const Timeline = () => {
         direction="column"
         align="center"
       >
-        <Box h="150px" w="100%" bg="red.200">
+        <Box h={["150px", "200px", "250px", "250px"]} w="100%" bg="red.200">
           <Image
-            src="https://images.unsplash.com/photo-1620825937374-87fc7d6bddc2?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjV8fGNvZGVyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            src={coverImg}
             alt="Segun Adebayo"
             h="100%"
             w="100%"
@@ -40,141 +58,114 @@ export const Timeline = () => {
           />
         </Box>
         <Flex w="100%" direction="row" align="center" px="8">
-          <Flex direction="column" align="center">
-            <Text fontWeight="bold" fontSize="lg">
-              999
-            </Text>
-            <Text fontSize="sm">Followers</Text>
-          </Flex>
+          <Link to="/followers">
+            <Flex direction="column" align="center">
+              <Text fontWeight="bold" fontSize="lg">
+                {followers.length}
+              </Text>
+              <Text fontSize="sm">Followers</Text>
+            </Flex>
+          </Link>
           <Spacer />
           <Avatar
             size="xl"
             name="Christian Nwamba"
-            src="https://bit.ly/code-beast"
+            src={profileImg}
             mt="-5"
             border="2px"
             borderColor="white"
           />
           <Spacer />
-          <Flex direction="column" align="center">
-            <Text fontWeight="bold" fontSize="lg">
-              2
-            </Text>
-            <Text fontSize="sm">Following</Text>
-          </Flex>
+          <Link to="/following">
+            <Flex direction="column" align="center">
+              <Text fontWeight="bold" fontSize="lg">
+                {following.length}
+              </Text>
+              <Text fontSize="sm">Following</Text>
+            </Flex>
+          </Link>
         </Flex>
         <Flex direction="row" my="5">
           <Text fontWeight="medium" fontSize="lg">
-            Rupam Das{" "}
+            {name}{" "}
           </Text>
           <Text mx="2">|</Text>
-          <Text fontWeight="medium" fontSize="lg">
-            @rupamdas832
+          <Text fontWeight="medium" fontSize="md" color="gray.500">
+            @{userId}
           </Text>
         </Flex>
-        <Flex px="3" my="5">
-          <Text>
-            Web Developer • JavaScript • React • Coding with @neogcamp • |
-            Unreal Engine 4 • Game Design | Loves travelling
-          </Text>
+        <Flex px="3" mb="5">
+          <Text>{bio}</Text>
         </Flex>
         <Divider />
-        <Box
-          maxW={["sm", "md", "xl", "xl"]}
-          borderWidth="1px"
-          borderRadius="lg"
-          overflow="hidden"
-          mt="5"
-        >
-          <Flex direction="row" p="2" align="center">
-            <Avatar name="Ryan Florence" src="https://bit.ly/code-beast" />
-            <Flex ml="3" direction="column">
-              <Text fontWeight="bold">Rupam Das</Text>
-              <Text fontSize="sm">@rupamdas832</Text>
-            </Flex>
-          </Flex>
-          <Box p="2">
-            <Text>
-              Why not try something new today? Explore the #PanamaPapers data
-              set with a #graphdatabase sandbox. Easy to get started with,
-              friendly step-by-step guide, all free and no download required!
-              #Neo4j #learning
-            </Text>
-          </Box>
-          <Flex
-            w={["60%", "50%", "40%", "40%"]}
-            direction="row"
-            align="center"
-            p="3"
-            fontSize="2xl"
-          >
-            <FcLikePlaceholder fontSize="2xl" />
-            <Text fontSize="sm" ml="1">
-              121
-            </Text>
-            <Spacer />
-            <FaRegComment />
-            <Text fontSize="sm" ml="1">
-              23
-            </Text>
-            <Spacer />
-            <FaRetweet style={{ color: "green" }} />
-            <Text fontSize="sm" ml="1">
-              4
-            </Text>
-          </Flex>
-        </Box>
-
-        <Box
-          maxW={["sm", "md", "xl", "xl"]}
-          borderWidth="1px"
-          borderRadius="lg"
-          overflow="hidden"
-          mt="5"
-        >
-          <Flex direction="row" p="2" align="center">
-            <Avatar name="Ryan Florence" src="https://bit.ly/code-beast" />
-            <Flex ml="3" direction="column">
-              <Text fontWeight="bold">Rupam Das</Text>
-              <Text fontSize="sm">@rupamdas832</Text>
-            </Flex>
-          </Flex>
-          <Box p="2">
-            <Text>
-              Set with a #graphdatabase sandbox. Easy to get started with,
-              friendly step-by-step guide, all free and no download required!
-              #Neo4j #learning.Got it!
-            </Text>
-            <Text>
-              Why not try something new today? Explore the #PanamaPapers data
-              set with a #graphdatabase sandbox. Easy to get started with,
-              friendly step-by-step guide, all free and no download required!
-              #Neo4j #learning
-            </Text>
-          </Box>
-          <Flex
-            w={["60%", "50%", "40%", "40%"]}
-            direction="row"
-            align="center"
-            p="3"
-            fontSize="2xl"
-          >
-            <FcLikePlaceholder fontSize="2xl" />
-            <Text fontSize="sm" ml="1">
-              121
-            </Text>
-            <Spacer />
-            <FaRegComment />
-            <Text fontSize="sm" ml="1">
-              23
-            </Text>
-            <Spacer />
-            <FaRetweet style={{ color: "green" }} />
-            <Text fontSize="sm" ml="1">
-              4
-            </Text>
-          </Flex>
-        </Box>
+        {userPosts.length === 0 ? (
+          <Text mt="5" fontSize="lg" fontWeight="medium" color="gray.400">
+            Compose your first post
+          </Text>
+        ) : (
+          userPosts.map((post) => {
+            const {
+              _id,
+              profileImg,
+              name,
+              userId,
+              content,
+              likes,
+              rePosts,
+              comments,
+            } = post;
+            const isLiked = likes.find((like) => like.userId === user.userId);
+            return (
+              <Box
+                maxW={["sm", "md", "xl", "xl"]}
+                borderWidth="1px"
+                borderRadius="lg"
+                overflow="hidden"
+                mt="5"
+                key={_id}
+              >
+                <Flex direction="row" p="2" align="center">
+                  <Avatar name="Kent Dodds" src={profileImg} />
+                  <Flex ml="3" direction="column">
+                    <Text fontWeight="bold">{name}</Text>
+                    <Text fontSize="sm">{userId}</Text>
+                  </Flex>
+                </Flex>
+                <Box p="2">
+                  <Text>{content}</Text>
+                </Box>
+                <Flex
+                  w={["60%", "50%", "40%", "40%"]}
+                  direction="row"
+                  align="center"
+                  p="3"
+                  fontSize="xl"
+                >
+                  <Box onClick={() => likeHandler(isLiked, _id)}>
+                    {isLiked ? (
+                      <FcLike />
+                    ) : (
+                      <FcLikePlaceholder fontSize="2xl" />
+                    )}
+                  </Box>
+                  <Text fontSize="sm" ml="1">
+                    {likes.length}
+                  </Text>
+                  <Spacer />
+                  <FaRegComment />
+                  <Text fontSize="sm" ml="1">
+                    {comments.length}
+                  </Text>
+                  <Spacer />
+                  <FaRetweet />
+                  <Text fontSize="sm" ml="1">
+                    {rePosts}
+                  </Text>
+                </Flex>
+              </Box>
+            );
+          })
+        )}
       </Flex>
     </Flex>
   );
