@@ -4,13 +4,28 @@ import { PostsData } from "../../api/Data";
 export const postSlice = createSlice({
   name: "posts",
   initialState: {
-    posts: PostsData,
+    posts: null,
+    postModal: null,
   },
   reducers: {
-    increment: (state, action) => {
+    loadPosts: (state, action) => {
+      state.posts = action.payload.posts;
+    },
+    likeButtonClicked: (state, action) => {
       state.posts = state.posts.map((post) => {
         if (post._id === action.payload.postId) {
           post.likes = post.likes.concat(action.payload.newLike);
+        }
+        return post;
+      });
+    },
+    loadPostOnModal: (state, action) => {
+      state.postModal = action.payload.post;
+    },
+    commentAdded: (state, action) => {
+      state.posts = state.posts.map((post) => {
+        if (post._id === action.payload.postId) {
+          post.comments = post.comments.concat(action.payload.newComment);
         }
         return post;
       });
@@ -21,6 +36,12 @@ export const postSlice = createSlice({
   },
 });
 
-export const { increment, composePost } = postSlice.actions;
+export const {
+  likeButtonClicked,
+  composePost,
+  commentAdded,
+  loadPostOnModal,
+  loadPosts,
+} = postSlice.actions;
 
 export default postSlice.reducer;

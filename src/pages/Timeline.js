@@ -1,33 +1,57 @@
-import { Avatar } from "@chakra-ui/avatar";
-import { Image } from "@chakra-ui/image";
-import { Text, Box, Flex, Spacer, Divider } from "@chakra-ui/layout";
 import { FcLike, FcLikePlaceholder } from "react-icons/fc";
 import { FaRegComment, FaRetweet } from "react-icons/fa";
-import React, { useEffect } from "react";
+import { BiLink } from "react-icons/bi";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { increment } from "../features/posts/postsSlice";
+import { commentHandler, likeHandler } from "../features/posts";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Textarea,
+  Button,
+  useDisclosure,
+  Image,
+  Avatar,
+  Text,
+  Box,
+  Flex,
+  Spacer,
+  Divider,
+} from "@chakra-ui/react";
+import { loadPostOnModal } from "../features/posts/postsSlice";
 
 export const Timeline = () => {
   const { user } = useSelector((state) => state.user);
-  const { userId, name, followers, following, profileImg, coverImg, bio } =
-    user;
+  const {
+    userName,
+    name,
+    followers,
+    following,
+    profileImg,
+    coverImg,
+    bio,
+    website,
+  } = user;
 
-  const { posts } = useSelector((state) => state.posts);
+  const { posts, postModal } = useSelector((state) => state.posts);
 
   const dispatch = useDispatch();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const likeHandler = (isLiked, _id) => {
-    if (isLiked === undefined) {
-      const newLike = {
-        userId: userId,
-      };
-      dispatch(increment({ newLike: newLike, postId: _id }));
-    }
-  };
+  const [reply, setReply] = useState("");
 
   let userPosts = [];
-  userPosts = posts.filter((post) => post.userId === userId);
+  userPosts = posts.filter((post) => post.userName === userName);
+
+  const commentModalHandler = (post) => {
+    dispatch(loadPostOnModal({ post }));
+    onOpen();
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -43,6 +67,53 @@ export const Timeline = () => {
       pt="16"
       pb="20"
     >
+      {postModal && (
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalCloseButton />
+            <ModalBody>
+              <Flex direction="row" p="2" align="center">
+                <Avatar name="Kent Dodds" src={postModal.profileImg} />
+                <Flex ml="3" direction="column">
+                  <Text fontWeight="bold">{postModal.name}</Text>
+                  <Text fontSize="sm">@{postModal.userName}</Text>
+                </Flex>
+              </Flex>
+              <Box p="2">
+                <Text>{postModal.content}</Text>
+              </Box>
+            </ModalBody>
+            <Flex direction="row" p="2" align="center">
+              <Avatar name="Kent Dodds" src={user.profileImg} size="sm" />
+              <Flex ml="3" direction="column" w="100%">
+                <Flex direction="row">
+                  <Text fontWeight="bold">{user.name}</Text>
+                  <Text fontSize="sm" color="gray.500" ml="3">
+                    @{user.userName}
+                  </Text>
+                </Flex>
+                <Textarea
+                  placeholder="Post your reply"
+                  maxLength={280}
+                  onChange={(e) => setReply(e.target.value)}
+                />
+              </Flex>
+            </Flex>
+            <ModalFooter>
+              <Button
+                colorScheme="teal"
+                disabled={reply === "" ? true : false}
+                onClick={() =>
+                  commentHandler(postModal, reply, onClose, user, dispatch)
+                }
+              >
+                Reply
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
       <Flex
         w={["100vw", "100vw", "45vw", "45vw"]}
         direction="column"
@@ -91,11 +162,15 @@ export const Timeline = () => {
           </Text>
           <Text mx="2">|</Text>
           <Text fontWeight="medium" fontSize="md" color="gray.500">
-            @{userId}
+            @{userName}
           </Text>
         </Flex>
         <Flex px="3" mb="5">
           <Text>{bio}</Text>
+        </Flex>
+        <Flex direction="row" align="center" color="teal" w="100%">
+          <BiLink />
+          <Text>{website}</Text>
         </Flex>
         <Divider />
         {userPosts.length === 0 ? (
@@ -108,16 +183,18 @@ export const Timeline = () => {
               _id,
               profileImg,
               name,
-              userId,
+              userName,
               content,
               likes,
               rePosts,
               comments,
             } = post;
-            const isLiked = likes.find((like) => like.userId === user.userId);
+            const isLiked = likes.find(
+              (like) => like.userName === user.userName
+            );
             return (
               <Box
-                maxW={["sm", "md", "xl", "xl"]}
+                w={["100vw", "100vw", "45vw", "45vw"]}
                 borderWidth="1px"
                 borderRadius="lg"
                 overflow="hidden"
@@ -128,12 +205,14 @@ export const Timeline = () => {
                   <Avatar name="Kent Dodds" src={profileImg} />
                   <Flex ml="3" direction="column">
                     <Text fontWeight="bold">{name}</Text>
-                    <Text fontSize="sm">{userId}</Text>
+                    <Text fontSize="sm">{userName}</Text>
                   </Flex>
                 </Flex>
-                <Box p="2">
-                  <Text>{content}</Text>
-                </Box>
+                <Link to={`/post/${_id}`}>
+                  <Box p="2">
+                    <Text>{content}</Text>
+                  </Box>
+                </Link>
                 <Flex
                   w={["60%", "50%", "40%", "40%"]}
                   direction="row"
@@ -141,7 +220,9 @@ export const Timeline = () => {
                   p="3"
                   fontSize="xl"
                 >
-                  <Box onClick={() => likeHandler(isLiked, _id)}>
+                  <Box
+                    onClick={() => likeHandler(isLiked, post, user, dispatch)}
+                  >
                     {isLiked ? (
                       <FcLike />
                     ) : (
@@ -152,7 +233,7 @@ export const Timeline = () => {
                     {likes.length}
                   </Text>
                   <Spacer />
-                  <FaRegComment />
+                  <FaRegComment onClick={() => commentModalHandler(post)} />
                   <Text fontSize="sm" ml="1">
                     {comments.length}
                   </Text>

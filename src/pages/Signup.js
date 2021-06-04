@@ -1,22 +1,22 @@
 import { Button } from "@chakra-ui/button";
-import { FormLabel } from "@chakra-ui/form-control";
-import { FormControl } from "@chakra-ui/form-control";
+import { FormLabel, FormControl } from "@chakra-ui/form-control";
 import { Image } from "@chakra-ui/image";
-import { InputGroup } from "@chakra-ui/input";
-import { InputRightElement } from "@chakra-ui/input";
-import { Input } from "@chakra-ui/input";
-import { Text } from "@chakra-ui/layout";
-import { Flex } from "@chakra-ui/layout";
+import { InputGroup, Input, InputRightElement } from "@chakra-ui/input";
+import { Text, Flex } from "@chakra-ui/layout";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Photo from "../assets/Asset880.svg";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { Alert, AlertIcon } from "@chakra-ui/alert";
 
 export const Signup = () => {
-  const [userId, setUserId] = useState();
+  const [userName, setUserName] = useState();
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [show, setShow] = React.useState(false);
+  const [error, setError] = useState("");
+  const [show, setShow] = useState(false);
+
   const handleClick = () => setShow(!show);
 
   return (
@@ -46,7 +46,7 @@ export const Signup = () => {
           Create an account
         </Text>
         <p>Signup with your Grader credentials to connect your account.</p>
-        <FormControl px="2" mt="2">
+        <FormControl px="2" mt="2" isRequired>
           <FormLabel>Name</FormLabel>
           <Input
             type="text"
@@ -54,36 +54,44 @@ export const Signup = () => {
             onChange={(e) => setName(e.target.value)}
           />
         </FormControl>
-        <FormControl px="2" mt="2">
+        <FormControl px="2" mt="2" isRequired>
           <FormLabel>Email</FormLabel>
           <Input
             type="text"
-            placeholder="Enter userId OR email"
+            placeholder="Enter userName OR email"
             onChange={(e) => setEmail(e.target.value)}
           />
         </FormControl>
-        <FormControl px="2" mt="2">
-          <FormLabel>UserId</FormLabel>
+        <FormControl px="2" mt="2" isRequired>
+          <FormLabel>Username</FormLabel>
           <Input
             type="text"
-            placeholder="Enter userId OR email"
-            onChange={(e) => setUserId(e.target.value)}
+            placeholder="Enter username OR email"
+            onChange={(e) => setUserName(e.target.value)}
           />
         </FormControl>
-        <FormLabel px="2">Password</FormLabel>
-        <InputGroup size="md" px="2" mt="2">
-          <Input
-            pr="4.5rem"
-            type={show ? "text" : "password"}
-            placeholder="Enter password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
-              {show ? "Hide" : "Show"}
-            </Button>
-          </InputRightElement>
-        </InputGroup>
+        <FormControl px="2" mt="2" isRequired>
+          <FormLabel>Password</FormLabel>
+          <InputGroup size="md">
+            <Input
+              pr="4.5rem"
+              type={show ? "text" : "password"}
+              placeholder="Enter password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <InputRightElement width="4.5rem">
+              <Button h="1.75rem" size="sm" onClick={handleClick}>
+                {show ? <BsEye /> : <BsEyeSlash />}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+        </FormControl>
+        {error && (
+          <Alert status="error">
+            <AlertIcon />
+            {error}
+          </Alert>
+        )}
         <Link to="/getting-started">
           <Button colorScheme="teal" variant="solid" my="5" ml="2">
             Signup

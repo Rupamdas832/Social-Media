@@ -1,7 +1,7 @@
 export const UsersData = [
   {
     _id: "abc1",
-    userId: "rupam832",
+    userName: "rupam832",
     name: "Rupam Das",
     email: "rupam@gmail.com",
     password: "123",
@@ -16,7 +16,7 @@ export const UsersData = [
   },
   {
     _id: "abc2",
-    userId: "itsRealAman",
+    userName: "itsRealAman",
     name: "Aman Rai",
     email: "aman@gmail.com",
     password: "123",
@@ -31,7 +31,7 @@ export const UsersData = [
   },
   {
     _id: "abc3",
-    userId: "angelPriya",
+    userName: "angelPriya",
     name: "Priya",
     email: "priya@gmail.com",
     password: "123",
@@ -46,7 +46,7 @@ export const UsersData = [
   },
   {
     _id: "abc4",
-    userId: "karanRocks",
+    userName: "karanRocks",
     name: "Karan Kumar",
     email: "karan@gmail.com",
     password: "123",
@@ -64,7 +64,7 @@ export const UsersData = [
 export const PostsData = [
   {
     _id: "1",
-    userId: "rupam832",
+    userName: "rupam832",
     name: "Rupam Das",
     profileImg:
       "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
@@ -73,22 +73,22 @@ export const PostsData = [
     likes: [
       {
         _id: "0scaasda",
-        userId: "karanRocks",
+        userName: "karanRocks",
       },
       {
         _id: "6sas",
-        userId: "itsRealAman",
+        userName: "itsRealAman",
       },
       {
         _id: "6saaefs",
-        userId: "angelPriya",
+        userName: "angelPriya",
       },
     ],
     rePosts: 2,
     comments: [
       {
         _id: "ejh",
-        userId: "itsRealAman",
+        userName: "itsRealAman",
         name: "Aman Rai",
         profileImg:
           "https://images.unsplash.com/photo-1581391528803-54be77ce23e3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
@@ -96,7 +96,7 @@ export const PostsData = [
       },
       {
         _id: "lkn",
-        userId: "angelPriya",
+        userName: "angelPriya",
         name: "Priya",
         profileImg:
           "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
@@ -106,7 +106,7 @@ export const PostsData = [
   },
   {
     _id: "2",
-    userId: "karanRocks",
+    userName: "karanRocks",
     name: "Karan Kumar",
     profileImg:
       "https://images.unsplash.com/photo-1503235930437-8c6293ba41f5?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
@@ -115,18 +115,18 @@ export const PostsData = [
     likes: [
       {
         _id: "lkn",
-        userId: "angelPriya",
+        userName: "angelPriya",
       },
       {
         _id: "0scdsaaasda",
-        userId: "rupam832",
+        userName: "rupam832",
       },
     ],
     rePosts: 5,
     comments: [
       {
         _id: "0sca",
-        userId: "rupam832",
+        userName: "rupam832",
         name: "Rupam Das",
         profileImg:
           "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
@@ -134,12 +134,39 @@ export const PostsData = [
       },
       {
         _id: "6sas",
-        userId: "itsRealAman",
+        userName: "itsRealAman",
         name: "Aman Rai",
         profileImg:
           "https://images.unsplash.com/photo-1581391528803-54be77ce23e3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
         text: "Really liked it",
       },
     ],
+  },
+];
+
+export const NotificationsData = [
+  {
+    _id: "a",
+    userId: "abc1",
+    userName: "rupam832",
+    items: [],
+  },
+  {
+    _id: "b",
+    userId: "abc2",
+    userName: "itsRealAman",
+    items: [],
+  },
+  {
+    _id: "c",
+    userId: "abc3",
+    userName: "angelPriya",
+    items: [],
+  },
+  {
+    _id: "d",
+    userId: "abc4",
+    userName: "karanRocks",
+    items: [],
   },
 ];

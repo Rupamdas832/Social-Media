@@ -10,14 +10,19 @@ import { Flex } from "@chakra-ui/layout";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LoginAPI } from "../api/ApiCall";
+import { LoginAPI, NotificationsAPI } from "../api/ApiCall";
 import Photo from "../assets/Asset880.svg";
-import { loadUser } from "../features/user/userSlice";
+import { loadNotifications, loadUser } from "../features/user/userSlice";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { Alert } from "@chakra-ui/alert";
+import { AlertIcon } from "@chakra-ui/alert";
+import { useToast } from "@chakra-ui/toast";
 
 export const Login = () => {
-  const [userId, setUserId] = useState();
+  const [userName, setUserName] = useState();
   const [password, setPassword] = useState();
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = useState(false);
+  const [error, setError] = useState("");
   const handleClick = () => setShow(!show);
 
   const navigate = useNavigate();
@@ -25,22 +30,58 @@ export const Login = () => {
 
   const dispatch = useDispatch();
 
+  const toast = useToast();
+
+  /*const fetchNotifications = async (_id) => {
+    try {
+      const {
+        status,
+        data: { notificationData },
+      } = await NotificationsAPI(_id);
+      if (status === 200) {
+        dispatch(loadNotifications({ notifications: notificationData.items }));
+        navigate(state?.from ? state.from : "/");
+        toast({
+          title: "Successfully logged In.",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
+  };*/
+
   const loginWithCredentials = async () => {
+    toast({
+      title: "Checking credentials.",
+      status: "info",
+      duration: 2000,
+      isClosable: true,
+    });
     try {
       const {
         status,
         data: { user, token },
-      } = await LoginAPI(userId, password);
+      } = await LoginAPI(userName, password);
       if (status === 200) {
         const newUser = {
           user,
           token,
         };
         dispatch(loadUser(newUser));
+        //fetchNotifications(user._id);
         navigate(state?.from ? state.from : "/");
+        toast({
+          title: "Successfully logged In.",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
       }
     } catch (error) {
-      console.log(error.response.data.message);
+      setError(error.response.data.message);
     }
   };
 
@@ -71,28 +112,36 @@ export const Login = () => {
           Welcome Back
         </Text>
         <p>Login with your Grader credentials to connect your account.</p>
-        <FormControl px="2" mt="2">
-          <FormLabel>UserId</FormLabel>
+        <FormControl px="2" mt="2" isRequired>
+          <FormLabel>Username</FormLabel>
           <Input
             type="text"
-            placeholder="Enter userId OR email"
-            onChange={(e) => setUserId(e.target.value)}
+            placeholder="Enter username OR email"
+            onChange={(e) => setUserName(e.target.value)}
           />
         </FormControl>
-        <FormLabel px="2">Password</FormLabel>
-        <InputGroup size="md" px="2" mt="2">
-          <Input
-            pr="4.5rem"
-            type={show ? "text" : "password"}
-            placeholder="Enter password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
-              {show ? "Hide" : "Show"}
-            </Button>
-          </InputRightElement>
-        </InputGroup>
+        <FormControl px="2" mt="2" isRequired>
+          <FormLabel>Password</FormLabel>
+          <InputGroup size="md">
+            <Input
+              pr="4.5rem"
+              type={show ? "text" : "password"}
+              placeholder="Enter password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <InputRightElement width="4.5rem">
+              <Button h="1.75rem" size="sm" onClick={handleClick}>
+                {show ? <BsEye /> : <BsEyeSlash />}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+        </FormControl>
+        {error && (
+          <Alert status="error">
+            <AlertIcon />
+            {error}
+          </Alert>
+        )}
         <Button
           colorScheme="teal"
           variant="solid"

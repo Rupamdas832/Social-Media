@@ -4,6 +4,7 @@ export const userSlice = createSlice({
   name: "user",
   initialState: {
     user: null,
+    notifications: [],
     isUserLogin: false,
     token: "",
   },
@@ -18,6 +19,9 @@ export const userSlice = createSlice({
       state.isUserLogin = false;
       state.token = "";
     },
+    loadNotifications: (state, action) => {
+      state.notifications = action.payload.notifications;
+    },
     editProfile: (state, action) => {
       state.user.name = action.payload.name;
       state.user.bio = action.payload.bio;
@@ -26,6 +30,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { loadUser, logoutUser, editProfile } = userSlice.actions;
+export const { loadUser, logoutUser, editProfile, loadNotifications } =
+  userSlice.actions;
 
 export default userSlice.reducer;

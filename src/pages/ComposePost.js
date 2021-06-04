@@ -10,10 +10,10 @@ import { composePost } from "../features/posts/postsSlice";
 import { v4 as uuid } from "uuid";
 
 export const ComposePost = () => {
-  const [content, setContent] = useState();
+  const [content, setContent] = useState("");
 
   const { user } = useSelector((state) => state.user);
-  const { userId, name, profileImg } = user;
+  const { userName, name, profileImg } = user;
 
   const dispatch = useDispatch();
 
@@ -22,7 +22,7 @@ export const ComposePost = () => {
   const composePostHandler = () => {
     const newPost = {
       _id: uuid(),
-      userId: userId,
+      userName: userName,
       name: name,
       profileImg: profileImg,
       content: content,
@@ -69,10 +69,14 @@ export const ComposePost = () => {
             />
           </FormControl>
         </Flex>
+        <Text color="gray.700" textAlign="right" mr="5">
+          {280 - content.length}
+        </Text>
         <Button
           colorScheme="teal"
           variant="solid"
           my="5"
+          disabled={content === "" ? true : false}
           onClick={() => composePostHandler()}
         >
           Post

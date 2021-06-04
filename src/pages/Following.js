@@ -26,7 +26,7 @@ export const Following = () => {
         px="2"
       >
         <Link to="/timeline">
-          <Button variant="ghost" fontSize="2xl">
+          <Button variant="ghost" fontSize="xl">
             <IoMdArrowRoundBack />
           </Button>
         </Link>
@@ -35,7 +35,7 @@ export const Following = () => {
           Followers
         </Text>
         <Spacer />
-        <Button variant="ghost" fontSize="2xl">
+        <Button variant="ghost" fontSize="xl">
           <IoMdPersonAdd />
         </Button>
       </Flex>
