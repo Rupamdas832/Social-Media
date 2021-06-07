@@ -9,12 +9,13 @@ export const commentHandler = (postModal, reply, onClose, user, dispatch) => {
     name: user.name,
     profileImg: user.profileImg,
     text: reply,
+    createdAt: new Date().toISOString(),
   };
   dispatch(commentAdded({ newComment: newComment, postId: postModal._id }));
   const newNotification = {
     _id: v4(),
     postId: postModal._id,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
     profileImg: user.profileImg,
     name: user.name,
     type: "commented",

@@ -1,13 +1,20 @@
-import { Button } from "@chakra-ui/button";
-import { FormLabel, FormControl } from "@chakra-ui/form-control";
-import { Image } from "@chakra-ui/image";
-import { InputGroup, Input, InputRightElement } from "@chakra-ui/input";
-import { Text, Flex } from "@chakra-ui/layout";
+import {
+  Button,
+  Image,
+  Text,
+  Flex,
+  Input,
+  FormLabel,
+  FormControl,
+  InputGroup,
+  InputRightElement,
+  Alert,
+  AlertIcon,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Photo from "../assets/Asset880.svg";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
-import { Alert, AlertIcon } from "@chakra-ui/alert";
 
 export const Signup = () => {
   const [userName, setUserName] = useState();

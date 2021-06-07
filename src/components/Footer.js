@@ -1,20 +1,25 @@
 import { Avatar } from "@chakra-ui/avatar";
 import { Spacer } from "@chakra-ui/layout";
 import { Flex } from "@chakra-ui/layout";
-import React from "react";
-import { AiOutlineHome } from "react-icons/ai";
-import { IoNotificationsOutline } from "react-icons/io5";
-import { IoIosAddCircleOutline, IoIosSearch } from "react-icons/io";
+import React, { useState } from "react";
+import { AiFillHome, AiOutlineHome } from "react-icons/ai";
+import { IoNotifications, IoNotificationsOutline } from "react-icons/io5";
+import { IoIosAddCircle, IoIosAddCircleOutline } from "react-icons/io";
+import { RiSearchFill, RiSearchLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUserProfile } from "../features/user/userSlice";
 
 export const Footer = () => {
   const { loggedInUser } = useSelector((state) => state.user);
+
+  const [route, setRoute] = useState("");
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const loadUserHandler = () => {
+    setRoute("");
     dispatch(loadUserProfile({ userProfile: loggedInUser }));
     navigate(`/timeline/${loggedInUser.userName}`);
   };
@@ -36,20 +41,28 @@ export const Footer = () => {
     >
       {loggedInUser && (
         <Flex direction="row" align="center" w={["100%", "100%", "60%", "60%"]}>
-          <Link to="/">
-            <AiOutlineHome />
+          <Link to="/" onClick={() => setRoute("home")}>
+            {route === "home" ? <AiFillHome /> : <AiOutlineHome />}
           </Link>
           <Spacer />
-          <Link to="/search">
-            <IoIosSearch />
+          <Link to="/search" onClick={() => setRoute("search")}>
+            {route === "search" ? <RiSearchFill /> : <RiSearchLine />}
           </Link>
           <Spacer />
-          <Link to="/compose">
-            <IoIosAddCircleOutline />
+          <Link to="/compose" onClick={() => setRoute("compose")}>
+            {route === "compose" ? (
+              <IoIosAddCircle />
+            ) : (
+              <IoIosAddCircleOutline />
+            )}
           </Link>
           <Spacer />
-          <Link to="/notification">
-            <IoNotificationsOutline />
+          <Link to="/notification" onClick={() => setRoute("notification")}>
+            {route === "notification" ? (
+              <IoNotifications />
+            ) : (
+              <IoNotificationsOutline />
+            )}
           </Link>
           <Spacer />
           <Avatar

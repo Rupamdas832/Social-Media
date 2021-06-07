@@ -11,7 +11,7 @@ export const likeHandler = (isLiked, post, user, dispatch) => {
     const newNotification = {
       _id: v4(),
       postId: post._id,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
       profileImg: user.profileImg,
       name: user.name,
       type: "liked",

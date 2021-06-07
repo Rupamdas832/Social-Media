@@ -70,39 +70,10 @@ export const PostsData = [
       "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     content:
       "The leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    likes: [
-      {
-        _id: "0scaasda",
-        userName: "karanRocks",
-      },
-      {
-        _id: "6sas",
-        userName: "itsRealAman",
-      },
-      {
-        _id: "6saaefs",
-        userName: "angelPriya",
-      },
-    ],
+    createdAt: new Date().toISOString(),
+    likes: [],
     rePosts: 2,
-    comments: [
-      {
-        _id: "ejh",
-        userName: "itsRealAman",
-        name: "Aman Rai",
-        profileImg:
-          "https://images.unsplash.com/photo-1581391528803-54be77ce23e3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-        text: "Loved It",
-      },
-      {
-        _id: "lkn",
-        userName: "angelPriya",
-        name: "Priya",
-        profileImg:
-          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-        text: "Love to connect with you",
-      },
-    ],
+    comments: [],
   },
   {
     _id: "2",
@@ -112,35 +83,10 @@ export const PostsData = [
       "https://images.unsplash.com/photo-1503235930437-8c6293ba41f5?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     content:
       "When an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,",
-    likes: [
-      {
-        _id: "lkn",
-        userName: "angelPriya",
-      },
-      {
-        _id: "0scdsaaasda",
-        userName: "rupam832",
-      },
-    ],
+    createdAt: new Date().toISOString(),
+    likes: [],
     rePosts: 5,
-    comments: [
-      {
-        _id: "0sca",
-        userName: "rupam832",
-        name: "Rupam Das",
-        profileImg:
-          "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-        text: "Hey It was Helpful",
-      },
-      {
-        _id: "6sas",
-        userName: "itsRealAman",
-        name: "Aman Rai",
-        profileImg:
-          "https://images.unsplash.com/photo-1581391528803-54be77ce23e3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZSUyMHBpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-        text: "Really liked it",
-      },
-    ],
+    comments: [],
   },
 ];
 

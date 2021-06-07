@@ -1,15 +1,17 @@
-import { Avatar } from "@chakra-ui/avatar";
-import { Button } from "@chakra-ui/button";
-import { FormLabel } from "@chakra-ui/form-control";
-import { FormControl } from "@chakra-ui/form-control";
-import { Image } from "@chakra-ui/image";
-import { Input } from "@chakra-ui/input";
-import { Box } from "@chakra-ui/layout";
-import { Flex } from "@chakra-ui/layout";
-import { Textarea } from "@chakra-ui/textarea";
+import {
+  Textarea,
+  Button,
+  Image,
+  Avatar,
+  Box,
+  Flex,
+  Input,
+  FormLabel,
+  FormControl,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { editProfile } from "../features/user/userSlice";
 
 export const ProfileEdit = () => {

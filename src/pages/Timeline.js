@@ -1,10 +1,8 @@
-import { FcLike, FcLikePlaceholder } from "react-icons/fc";
-import { FaRegComment, FaRetweet } from "react-icons/fa";
 import { BiLink } from "react-icons/bi";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { commentHandler, likeHandler } from "../features/posts";
+import { commentHandler } from "../features/posts";
 import {
   Modal,
   ModalOverlay,
@@ -24,57 +22,29 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { loadPostOnModal } from "../features/posts/postsSlice";
-import { followButtonClicked } from "../features/user/userSlice";
+import { PostCard } from "../components/PostCard";
+import { followUserHandler } from "../features/user/followUserHandler";
 
 export const Timeline = () => {
-  const { userProfile, loggedInUser } = useSelector((state) => state.user);
-  const {
-    userName,
-    name,
-    followers,
-    following,
-    profileImg,
-    coverImg,
-    bio,
-    website,
-  } = userProfile;
-
-  const isFollowing = loggedInUser.following.find(
-    (item) => item.userName === userName
-  );
-
+  const { loggedInUser, usersList } = useSelector((state) => state.user);
   const { posts, postModal } = useSelector((state) => state.posts);
-
   const dispatch = useDispatch();
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [reply, setReply] = useState("");
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { userNameFromParam } = useParams();
+
+  const isFollowing = loggedInUser.following.find(
+    (item) => item.userName === userNameFromParam
+  );
   let userPosts = [];
-  userPosts = posts.filter((post) => post.userName === userName);
+  userPosts = posts.filter((post) => post.userName === userNameFromParam);
 
   const commentModalHandler = (post) => {
     dispatch(loadPostOnModal({ post }));
     onOpen();
-  };
-
-  const followUserHandler = () => {
-    const newFollowing = {
-      userName: userName,
-      profileImg: profileImg,
-      name: name,
-    };
-    const newFollower = {
-      userName: loggedInUser.userName,
-      profileImg: loggedInUser.profileImg,
-      name: loggedInUser.name,
-    };
-    dispatch(
-      followButtonClicked({
-        newFollowing: newFollowing,
-        newFollower: newFollower,
-      })
-    );
   };
 
   useEffect(() => {
@@ -111,14 +81,14 @@ export const Timeline = () => {
             <Flex direction="row" p="2" align="center">
               <Avatar
                 name="Kent Dodds"
-                src={userProfile.profileImg}
+                src={loggedInUser.profileImg}
                 size="sm"
               />
               <Flex ml="3" direction="column" w="100%">
                 <Flex direction="row">
-                  <Text fontWeight="bold">{userProfile.name}</Text>
+                  <Text fontWeight="bold">{loggedInUser.name}</Text>
                   <Text fontSize="sm" color="gray.500" ml="3">
-                    @{userProfile.userName}
+                    @{loggedInUser.userName}
                   </Text>
                 </Flex>
                 <Textarea
@@ -137,7 +107,7 @@ export const Timeline = () => {
                     postModal,
                     reply,
                     onClose,
-                    userProfile,
+                    loggedInUser,
                     dispatch
                   )
                 }
@@ -148,169 +118,138 @@ export const Timeline = () => {
           </ModalContent>
         </Modal>
       )}
-      <Flex
-        w={["100vw", "100vw", "45vw", "45vw"]}
-        direction="column"
-        align="center"
-      >
-        <Box h={["150px", "200px", "250px", "250px"]} w="100%" bg="red.200">
-          <Image
-            src={coverImg}
-            alt="Segun Adebayo"
-            h="100%"
-            w="100%"
-            overflow
-          />
-        </Box>
-        <Flex w="100%" direction="row" align="center" px="8">
-          <Link to="/followers">
-            <Flex direction="column" align="center">
-              <Text fontWeight="bold" fontSize="lg">
-                {followers.length}
-              </Text>
-              <Text fontSize="sm">Followers</Text>
-            </Flex>
-          </Link>
-          <Spacer />
-          <Avatar
-            size="xl"
-            name="Christian Nwamba"
-            src={profileImg}
-            mt="-5"
-            border="2px"
-            borderColor="white"
-          />
-          <Spacer />
-          <Link to="/following">
-            <Flex direction="column" align="center">
-              <Text fontWeight="bold" fontSize="lg">
-                {following.length}
-              </Text>
-              <Text fontSize="sm">Following</Text>
-            </Flex>
-          </Link>
-        </Flex>
-        <Flex direction="row" my="5">
-          <Text fontWeight="medium" fontSize="lg">
-            {name}{" "}
-          </Text>
-          <Text mx="2">|</Text>
-          <Text fontWeight="medium" fontSize="md" color="gray.500">
-            @{userName}
-          </Text>
-        </Flex>
-        <Flex px="3" mb="5">
-          <Text>{bio}</Text>
-        </Flex>
-        <Flex direction="row" align="center" color="teal" w="100%">
-          <BiLink />
-          <Text>{website}</Text>
-        </Flex>
-        {userProfile.userName === loggedInUser.userName ? null : (
-          <Flex
-            direction="row"
-            px="2"
-            my="3"
-            w="100%"
-            justifyContent="space-around"
-          >
-            {isFollowing === undefined ? (
-              <Button
-                colorScheme="teal"
-                px="6"
-                onClick={() => followUserHandler()}
-              >
-                Follow
-              </Button>
-            ) : (
-              <Button colorScheme="teal" variant="outline">
-                Following
-              </Button>
-            )}
-
-            <Button variant="outline" colorScheme="teal">
-              Message
-            </Button>
-          </Flex>
-        )}
-        <Divider />
-        {userPosts.length === 0 ? (
-          <Text mt="5" fontSize="lg" fontWeight="medium" color="gray.400">
-            Compose your first post
-          </Text>
-        ) : (
-          userPosts.map((post) => {
-            const {
-              _id,
-              profileImg,
-              name,
-              userName,
-              content,
-              likes,
-              rePosts,
-              comments,
-            } = post;
-            const isLiked = likes.find(
-              (like) => like.userName === userProfile.userName
-            );
-            return (
+      {usersList.map((user) => {
+        const {
+          _id,
+          userName,
+          name,
+          followers,
+          following,
+          profileImg,
+          coverImg,
+          bio,
+          website,
+        } = user;
+        if (userName === userNameFromParam) {
+          return (
+            <Flex
+              w={["100vw", "100vw", "45vw", "45vw"]}
+              direction="column"
+              align="center"
+              key={_id}
+            >
               <Box
-                w={["100vw", "100vw", "45vw", "45vw"]}
-                borderWidth="1px"
-                borderRadius="lg"
-                overflow="hidden"
-                mt="5"
-                key={_id}
+                h={["150px", "200px", "250px", "250px"]}
+                w="100%"
+                bg="red.200"
               >
-                <Flex direction="row" p="2" align="center">
-                  <Avatar name="Kent Dodds" src={profileImg} />
-                  <Flex ml="3" direction="column">
-                    <Text fontWeight="bold">{name}</Text>
-                    <Text fontSize="sm">{userName}</Text>
-                  </Flex>
-                </Flex>
-                <Link to={`/post/${_id}`}>
-                  <Box p="2">
-                    <Text>{content}</Text>
-                  </Box>
-                </Link>
-                <Flex
-                  w={["60%", "50%", "40%", "40%"]}
-                  direction="row"
-                  align="center"
-                  p="3"
-                  fontSize="xl"
-                >
-                  <Box
-                    onClick={() =>
-                      likeHandler(isLiked, post, userProfile, dispatch)
-                    }
-                  >
-                    {isLiked ? (
-                      <FcLike />
-                    ) : (
-                      <FcLikePlaceholder fontSize="2xl" />
-                    )}
-                  </Box>
-                  <Text fontSize="sm" ml="1">
-                    {likes.length}
-                  </Text>
-                  <Spacer />
-                  <FaRegComment onClick={() => commentModalHandler(post)} />
-                  <Text fontSize="sm" ml="1">
-                    {comments.length}
-                  </Text>
-                  <Spacer />
-                  <FaRetweet />
-                  <Text fontSize="sm" ml="1">
-                    {rePosts}
-                  </Text>
-                </Flex>
+                <Image
+                  src={coverImg}
+                  alt="Segun Adebayo"
+                  h="100%"
+                  w="100%"
+                  overflow
+                />
               </Box>
-            );
-          })
-        )}
-      </Flex>
+              <Flex w="100%" direction="row" align="center" px="8">
+                <Link to={`/${userName}/followers`}>
+                  <Flex direction="column" align="center">
+                    <Text fontWeight="bold" fontSize="lg">
+                      {followers.length}
+                    </Text>
+                    <Text fontSize="sm">Followers</Text>
+                  </Flex>
+                </Link>
+                <Spacer />
+                <Avatar
+                  size="xl"
+                  name="Christian Nwamba"
+                  src={profileImg}
+                  mt="-5"
+                  border="2px"
+                  borderColor="white"
+                />
+                <Spacer />
+                <Link to={`/${userName}/following`}>
+                  <Flex direction="column" align="center">
+                    <Text fontWeight="bold" fontSize="lg">
+                      {following.length}
+                    </Text>
+                    <Text fontSize="sm">Following</Text>
+                  </Flex>
+                </Link>
+              </Flex>
+              <Flex direction="row" my="5">
+                <Text fontWeight="medium" fontSize="lg">
+                  {name}{" "}
+                </Text>
+                <Text mx="2">|</Text>
+                <Text fontWeight="medium" fontSize="md" color="gray.500">
+                  @{userName}
+                </Text>
+              </Flex>
+              <Flex px="3" mb="5">
+                <Text>{bio}</Text>
+              </Flex>
+              <Flex direction="row" align="center" color="teal" w="100%">
+                <BiLink />
+                <Text>{website}</Text>
+              </Flex>
+              {loggedInUser.userName === userNameFromParam ? null : (
+                <Flex
+                  direction="row"
+                  px="2"
+                  my="3"
+                  w="100%"
+                  justifyContent="space-around"
+                >
+                  {isFollowing === undefined ? (
+                    <Button
+                      colorScheme="teal"
+                      px="6"
+                      onClick={() =>
+                        followUserHandler(
+                          userName,
+                          name,
+                          profileImg,
+                          loggedInUser,
+                          dispatch
+                        )
+                      }
+                    >
+                      Follow
+                    </Button>
+                  ) : (
+                    <Button colorScheme="teal" variant="outline">
+                      Following
+                    </Button>
+                  )}
+
+                  <Button variant="outline" colorScheme="teal">
+                    Message
+                  </Button>
+                </Flex>
+              )}
+              <Divider />
+              {userPosts.length === 0 ? (
+                <Text mt="5" fontSize="lg" fontWeight="medium" color="gray.400">
+                  Compose your first post
+                </Text>
+              ) : (
+                userPosts.map((post) => {
+                  return (
+                    <PostCard
+                      post={post}
+                      commentModalHandler={commentModalHandler}
+                      key={post._id}
+                    />
+                  );
+                })
+              )}
+            </Flex>
+          );
+        } else return null;
+      })}
     </Flex>
   );
 };

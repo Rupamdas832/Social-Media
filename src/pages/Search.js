@@ -1,11 +1,7 @@
-import { Text } from "@chakra-ui/layout";
-import { Flex } from "@chakra-ui/layout";
+import { Text, Flex, Avatar, Button, Input } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { Avatar } from "@chakra-ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { Input } from "@chakra-ui/input";
-import { Button } from "@chakra-ui/button";
+import { useNavigate } from "react-router-dom";
 import { loadUserProfile } from "../features/user/userSlice";
 
 export const Search = () => {

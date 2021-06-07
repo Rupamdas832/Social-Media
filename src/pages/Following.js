@@ -1,15 +1,22 @@
 import { Text } from "@chakra-ui/layout";
 import { Flex } from "@chakra-ui/layout";
+import { IoMdArrowRoundBack, IoMdPersonAdd } from "react-icons/io";
 import React from "react";
 import { Spacer } from "@chakra-ui/layout";
 import { Avatar } from "@chakra-ui/avatar";
 import { Button } from "@chakra-ui/button";
-import { Link } from "react-router-dom";
-import { IoMdArrowRoundBack, IoMdPersonAdd } from "react-icons/io";
+import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export const Following = () => {
-  const { userProfile } = useSelector((state) => state.user);
+  const { usersList, loggedInUser } = useSelector((state) => state.user);
+
+  const { userNameFromParam } = useParams();
+
+  const { following } = usersList.find(
+    (user) => user.userName === userNameFromParam
+  );
+
   return (
     <Flex
       w="100vw"
@@ -27,96 +34,67 @@ export const Following = () => {
         my="2"
         px="2"
       >
-        <Link to={`/timeline/${userProfile.userName}`}>
+        <Link to={`/timeline/${userNameFromParam}`}>
           <Button variant="ghost" fontSize="xl">
             <IoMdArrowRoundBack />
           </Button>
         </Link>
         <Spacer />
         <Text fontSize="lg" fontWeight="semibold">
-          Followers
+          Following
         </Text>
         <Spacer />
         <Button variant="ghost" fontSize="xl">
           <IoMdPersonAdd />
         </Button>
       </Flex>
-      <Flex
-        w={["100vw", "100vw", "40vw", "40vw"]}
-        direction="column"
-        align="center"
-      >
-        <Flex
-          direction="row"
-          align="center"
-          w="100%"
-          mt="2"
-          px="2"
-          py="3"
-          border="1px"
-          borderColor="gray.200"
-        >
-          <Avatar
-            size="sm"
-            name="Kent Dodds"
-            src="https://bit.ly/kent-c-dodds"
-          />
-          <Text fontWeight="semibold" px="2">
-            Peter Parker
-          </Text>
-          <Spacer />
-          <Button
-            colorScheme="teal"
-            variant="solid"
-            px="2"
-            borderRadius="xl"
-            fontSize="sm"
-          >
-            Following
-          </Button>
-        </Flex>
-      </Flex>
+      {following.length === 0 ? (
+        <Text mt="5" color="gray.500">
+          No Following
+        </Text>
+      ) : (
+        following.map((user) => {
+          const { name, userName, profileImg, _id } = user;
+          return (
+            <Flex
+              w={["100vw", "100vw", "40vw", "40vw"]}
+              direction="column"
+              align="center"
+              key={_id}
+            >
+              <Flex
+                direction="row"
+                align="center"
+                w="100%"
+                mt="2"
+                px="2"
+                py="3"
+                border="1px"
+                borderColor="gray.200"
+              >
+                <Avatar size="sm" name="Prosper Otemuyiwa" src={profileImg} />
+                <Flex direction="column" px="2">
+                  <Text fontWeight="semibold">{name}</Text>
+                  <Text color="gray.500" fontWeight="light">
+                    {userName}
+                  </Text>
+                </Flex>
 
-      <Flex
-        w={["100vw", "100vw", "40vw", "40vw"]}
-        direction="column"
-        align="center"
-      >
-        <Flex
-          direction="row"
-          align="center"
-          w="100%"
-          mt="2"
-          px="2"
-          py="3"
-          border="1px"
-          borderColor="gray.200"
-        >
-          <Avatar
-            size="sm"
-            name="Prosper Otemuyiwa"
-            src="https://bit.ly/prosper-baba"
-          />
-          <Text fontWeight="semibold" px="2">
-            Samay Raina
-          </Text>
-          <Spacer />
-          <Button
-            colorScheme="teal"
-            variant="solid"
-            px="2"
-            borderRadius="xl"
-            fontSize="sm"
-          >
-            Following
-          </Button>
-        </Flex>
-      </Flex>
-      <Flex
-        w={["100vw", "100vw", "40vw", "40vw"]}
-        direction="column"
-        align="center"
-      ></Flex>
+                <Spacer />
+                <Button
+                  colorScheme="teal"
+                  variant="outline"
+                  px="4"
+                  borderRadius="xl"
+                  fontSize="sm"
+                >
+                  Follow
+                </Button>
+              </Flex>
+            </Flex>
+          );
+        })
+      )}
     </Flex>
   );
 };

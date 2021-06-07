@@ -1,12 +1,17 @@
-import { Button } from "@chakra-ui/button";
-import { FormLabel } from "@chakra-ui/form-control";
-import { FormControl } from "@chakra-ui/form-control";
-import { Image } from "@chakra-ui/image";
-import { InputGroup } from "@chakra-ui/input";
-import { InputRightElement } from "@chakra-ui/input";
-import { Input } from "@chakra-ui/input";
-import { Text } from "@chakra-ui/layout";
-import { Flex } from "@chakra-ui/layout";
+import {
+  Button,
+  Image,
+  Text,
+  Flex,
+  Input,
+  FormLabel,
+  FormControl,
+  InputGroup,
+  InputRightElement,
+  useToast,
+  AlertIcon,
+  Alert,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -18,9 +23,6 @@ import {
   loadUserProfile,
 } from "../features/user/userSlice";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
-import { Alert } from "@chakra-ui/alert";
-import { AlertIcon } from "@chakra-ui/alert";
-import { useToast } from "@chakra-ui/toast";
 
 export const Login = () => {
   const [userName, setUserName] = useState();

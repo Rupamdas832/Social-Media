@@ -1,8 +1,12 @@
-import { Avatar } from "@chakra-ui/avatar";
-import { Button } from "@chakra-ui/button";
-import { FormLabel, FormControl } from "@chakra-ui/form-control";
-import { Text, Flex } from "@chakra-ui/layout";
-import { Textarea } from "@chakra-ui/textarea";
+import {
+  Textarea,
+  Button,
+  Avatar,
+  Text,
+  Flex,
+  FormControl,
+  FormLabel,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -29,7 +33,7 @@ export const ComposePost = () => {
       likes: [],
       rePosts: 0,
       comments: [],
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     };
     dispatch(composePost({ newPost: newPost }));
     setContent("");

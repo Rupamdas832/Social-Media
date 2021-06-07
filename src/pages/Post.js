@@ -1,12 +1,4 @@
-import { Avatar } from "@chakra-ui/avatar";
-import { Text } from "@chakra-ui/layout";
-import { Flex } from "@chakra-ui/layout";
-import { Box } from "@chakra-ui/layout";
-import { FcLike, FcLikePlaceholder } from "react-icons/fc";
-import { AiOutlineRetweet } from "react-icons/ai";
-import { FaRegComment, FaRetweet } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
-import { Spacer } from "@chakra-ui/layout";
 import {
   Modal,
   ModalOverlay,
@@ -17,11 +9,17 @@ import {
   Textarea,
   Button,
   useDisclosure,
+  Avatar,
+  Text,
+  Box,
+  Flex,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { loadPostOnModal } from "../features/posts/postsSlice";
-import { commentHandler, likeHandler } from "../features/posts";
+import { commentHandler } from "../features/posts";
+import { formatDistanceToNow } from "date-fns";
+import { PostCard } from "../components/PostCard";
 
 export const Post = () => {
   const { posts, postModal } = useSelector((state) => state.posts);
@@ -110,94 +108,55 @@ export const Post = () => {
         </Modal>
       )}
       {posts.map((post) => {
-        const {
-          _id,
-          name,
-          userName,
-          content,
-          profileImg,
-          likes,
-          rePosts,
-          comments,
-        } = post;
-        const isLiked = likes.find(
-          (like) => like.userName === loggedInUser.userName
-        );
-        if (_id === postId) {
+        if (post._id === postId) {
           return (
-            <Box
-              w={["100vw", "100vw", "45vw", "45vw"]}
-              borderWidth="1px"
-              borderRadius="lg"
-              overflow="hidden"
+            <Flex
+              direction="column"
+              key={post._id}
+              bg="gray.200"
               mt="5"
-              key={_id}
+              rounded="lg"
             >
-              <Flex direction="row" p="2" align="center" bg="gray.100">
-                <Avatar name="Kent Dodds" src={profileImg} />
-                <Flex ml="3" direction="column">
-                  <Text fontWeight="bold">{name}</Text>
-                  <Text fontSize="sm">@{userName}</Text>
-                </Flex>
-              </Flex>
-              <Box p="2" bg="gray.100">
-                <Text>{content}</Text>
-              </Box>
-              <Flex
-                w={["60%", "50%", "40%", "40%"]}
-                direction="row"
-                align="center"
-                p="3"
-                fontSize="xl"
-              >
-                <Box
-                  onClick={() =>
-                    likeHandler(isLiked, post, loggedInUser, dispatch)
-                  }
-                >
-                  {isLiked ? <FcLike /> : <FcLikePlaceholder fontSize="2xl" />}
-                </Box>
-                <Text fontSize="sm" ml="1">
-                  {likes.length}
-                </Text>
-                <Spacer />
-                <FaRegComment onClick={() => commentModalHandler(post)} />
-                <Text fontSize="sm" ml="1">
-                  {comments.length}
-                </Text>
-                <Spacer />
-                <AiOutlineRetweet />
-                <Text fontSize="sm" ml="1">
-                  {rePosts}
-                </Text>
-              </Flex>
-              <Flex direction="column" mt="3" px="2">
-                {comments.map((comment) => {
+              <PostCard post={post} commentModalHandler={commentModalHandler} />
+              <Flex direction="column" mt="3" px="2" bg="white">
+                {post.comments.map((comment) => {
                   return (
-                    <Box key={comment._id}>
-                      <Flex direction="row" p="2" align="center">
-                        <Avatar
-                          name="Kent Dodds"
-                          src={comment.profileImg}
-                          size="sm"
-                        />
-                        <Flex ml="3" direction="column">
-                          <Flex direction="row">
-                            <Text fontWeight="bold">{comment.name}</Text>
-                            <Text fontSize="sm" color="gray.500" ml="3">
-                              @{comment.userName}
-                            </Text>
-                          </Flex>
-                          <Text>{comment.text}</Text>
+                    <Flex
+                      direction="row"
+                      p="2"
+                      align="center"
+                      key={comment._id}
+                    >
+                      <Avatar
+                        name="Kent Dodds"
+                        src={comment.profileImg}
+                        size="sm"
+                      />
+                      <Flex ml="3" direction="column" w="100%">
+                        <Flex direction="row">
+                          <Text fontWeight="bold">{comment.name}</Text>
+                          <Text fontSize="sm" color="gray.500" ml="3">
+                            @{comment.userName}
+                          </Text>
                         </Flex>
+                        <Text>{comment.text}</Text>
+                        <Text
+                          fontWeight="hairline"
+                          fontStyle="italic"
+                          fontSize="xs"
+                          textAlign="right"
+                        >
+                          {formatDistanceToNow(Date.parse(comment.createdAt))}{" "}
+                          ago
+                        </Text>
                       </Flex>
-                    </Box>
+                    </Flex>
                   );
                 })}
               </Flex>
-            </Box>
+            </Flex>
           );
-        }
+        } else return null;
       })}
     </Flex>
   );

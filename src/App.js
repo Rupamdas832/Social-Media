@@ -81,12 +81,21 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/getting-started" element={<GettingStarted />} />
-        <PrivateRoute path="/timeline/:userName" element={<Timeline />} />
+        <PrivateRoute
+          path="/timeline/:userNameFromParam"
+          element={<Timeline />}
+        />
         <PrivateRoute path="/notification" element={<Notification />} />
         <PrivateRoute path="/settings/profile" element={<ProfileEdit />} />
         <PrivateRoute path="/compose" element={<ComposePost />} />
-        <PrivateRoute path="/following" element={<Following />} />
-        <PrivateRoute path="/followers" element={<Followers />} />
+        <PrivateRoute
+          path="/:userNameFromParam/following"
+          element={<Following />}
+        />
+        <PrivateRoute
+          path="/:userNameFromParam/followers"
+          element={<Followers />}
+        />
         <PrivateRoute path="/search" element={<Search />} />
         <PrivateRoute path="/post/:postId" element={<Post />} />
         <Route path="/*" element={<PageNotFound />} />

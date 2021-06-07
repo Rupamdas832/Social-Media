@@ -5,11 +5,18 @@ import React from "react";
 import { Spacer } from "@chakra-ui/layout";
 import { Avatar } from "@chakra-ui/avatar";
 import { Button } from "@chakra-ui/button";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export const Followers = () => {
-  const { userProfile } = useSelector((state) => state.user);
+  const { usersList, loggedInUser } = useSelector((state) => state.user);
+
+  const { userNameFromParam } = useParams();
+
+  const { followers } = usersList.find(
+    (user) => user.userName === userNameFromParam
+  );
+
   return (
     <Flex
       w="100vw"
@@ -27,7 +34,7 @@ export const Followers = () => {
         my="2"
         px="2"
       >
-        <Link to={`/timeline/${userProfile.userName}`}>
+        <Link to={`/timeline/${userNameFromParam}`}>
           <Button variant="ghost" fontSize="xl">
             <IoMdArrowRoundBack />
           </Button>
@@ -41,148 +48,53 @@ export const Followers = () => {
           <IoMdPersonAdd />
         </Button>
       </Flex>
+      {followers.length === 0 ? (
+        <Text mt="5" color="gray.500">
+          No Followers
+        </Text>
+      ) : (
+        followers.map((user) => {
+          const { name, userName, profileImg, _id } = user;
+          return (
+            <Flex
+              w={["100vw", "100vw", "40vw", "40vw"]}
+              direction="column"
+              align="center"
+              key={_id}
+            >
+              <Flex
+                direction="row"
+                align="center"
+                w="100%"
+                mt="2"
+                px="2"
+                py="3"
+                border="1px"
+                borderColor="gray.200"
+              >
+                <Avatar size="sm" name="Prosper Otemuyiwa" src={profileImg} />
+                <Flex direction="column" px="2">
+                  <Text fontWeight="semibold">{name}</Text>
+                  <Text color="gray.500" fontWeight="light">
+                    {userName}
+                  </Text>
+                </Flex>
 
-      <Flex
-        w={["100vw", "100vw", "40vw", "40vw"]}
-        direction="column"
-        align="center"
-      >
-        <Flex
-          direction="row"
-          align="center"
-          w="100%"
-          mt="2"
-          px="2"
-          py="3"
-          border="1px"
-          borderColor="gray.200"
-        >
-          <Avatar
-            size="sm"
-            name="Kent Dodds"
-            src="https://bit.ly/kent-c-dodds"
-          />
-          <Text fontWeight="semibold" px="2">
-            Peter Parker
-          </Text>
-          <Spacer />
-          <Button
-            colorScheme="teal"
-            variant="solid"
-            px="2"
-            borderRadius="xl"
-            fontSize="sm"
-          >
-            Following
-          </Button>
-        </Flex>
-      </Flex>
-
-      <Flex
-        w={["100vw", "100vw", "40vw", "40vw"]}
-        direction="column"
-        align="center"
-      >
-        <Flex
-          direction="row"
-          align="center"
-          w="100%"
-          mt="2"
-          px="2"
-          py="3"
-          border="1px"
-          borderColor="gray.200"
-        >
-          <Avatar
-            size="sm"
-            name="Prosper Otemuyiwa"
-            src="https://bit.ly/prosper-baba"
-          />
-          <Text fontWeight="semibold" px="2">
-            Samay Raina
-          </Text>
-          <Spacer />
-          <Button
-            colorScheme="teal"
-            variant="outline"
-            px="4"
-            borderRadius="xl"
-            fontSize="sm"
-          >
-            Follow
-          </Button>
-        </Flex>
-      </Flex>
-      <Flex
-        w={["100vw", "100vw", "40vw", "40vw"]}
-        direction="column"
-        align="center"
-      >
-        <Flex
-          direction="row"
-          align="center"
-          w="100%"
-          mt="2"
-          px="2"
-          py="3"
-          border="1px"
-          borderColor="gray.200"
-        >
-          <Avatar
-            size="sm"
-            name="Kola Tioluwani"
-            src="https://bit.ly/tioluwani-kolawole"
-          />
-          <Text fontWeight="semibold" px="2">
-            Kola Tioluwani
-          </Text>
-          <Spacer />
-          <Button
-            colorScheme="teal"
-            variant="solid"
-            px="2"
-            borderRadius="xl"
-            fontSize="sm"
-          >
-            Following
-          </Button>
-        </Flex>
-      </Flex>
-      <Flex
-        w={["100vw", "100vw", "40vw", "40vw"]}
-        direction="column"
-        align="center"
-      >
-        <Flex
-          direction="row"
-          align="center"
-          w="100%"
-          mt="2"
-          px="2"
-          py="3"
-          border="1px"
-          borderColor="gray.200"
-        >
-          <Avatar
-            size="sm"
-            name="Dan Abrahmov"
-            src="https://bit.ly/dan-abramov"
-          />
-          <Text fontWeight="semibold" px="2">
-            Elon Musk
-          </Text>
-          <Spacer />
-          <Button
-            colorScheme="teal"
-            variant="solid"
-            px="2"
-            borderRadius="xl"
-            fontSize="sm"
-          >
-            Following
-          </Button>
-        </Flex>
-      </Flex>
+                <Spacer />
+                <Button
+                  colorScheme="teal"
+                  variant="outline"
+                  px="4"
+                  borderRadius="xl"
+                  fontSize="sm"
+                >
+                  Follow
+                </Button>
+              </Flex>
+            </Flex>
+          );
+        })
+      )}
     </Flex>
   );
 };
