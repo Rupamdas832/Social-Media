@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Route, Routes } from "react-router-dom";
-import { AllNotificationsAPI, PostsAPI } from "./api/ApiCall";
+import { AllNotificationsAPI, PostsAPI, UsersAPI } from "./api/ApiCall";
 import "./App.css";
 import { Footer, PrivateRoute } from "./components";
 import { Header } from "./components/Header";
 import { loadAllNotifications } from "./features/notifications/notificationSlice";
 import { loadPosts } from "./features/posts/postsSlice";
+import { loadAllUsers } from "./features/user/userSlice";
 import {
   ComposePost,
   Followers,
@@ -18,6 +19,7 @@ import {
   PageNotFound,
   Post,
   ProfileEdit,
+  Search,
   Signup,
   Timeline,
 } from "./pages";
@@ -52,9 +54,24 @@ const App = () => {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const {
+        status,
+        data: { users },
+      } = await UsersAPI();
+      if (status === 200) {
+        dispatch(loadAllUsers({ users: users }));
+      }
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
   useEffect(() => {
     fetchPosts();
     fetchNotifications();
+    fetchUsers();
   }, []);
   return (
     <div className="App">
@@ -64,12 +81,13 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/getting-started" element={<GettingStarted />} />
-        <PrivateRoute path="/timeline" element={<Timeline />} />
+        <PrivateRoute path="/timeline/:userName" element={<Timeline />} />
         <PrivateRoute path="/notification" element={<Notification />} />
         <PrivateRoute path="/settings/profile" element={<ProfileEdit />} />
         <PrivateRoute path="/compose" element={<ComposePost />} />
         <PrivateRoute path="/following" element={<Following />} />
         <PrivateRoute path="/followers" element={<Followers />} />
+        <PrivateRoute path="/search" element={<Search />} />
         <PrivateRoute path="/post/:postId" element={<Post />} />
         <Route path="/*" element={<PageNotFound />} />
       </Routes>

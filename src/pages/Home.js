@@ -23,7 +23,7 @@ import { commentHandler, likeHandler } from "../features/posts";
 
 export const Home = () => {
   const { posts, postModal } = useSelector((state) => state.posts);
-  const { user } = useSelector((state) => state.user);
+  const { loggedInUser } = useSelector((state) => state.user);
   const { allUsersNotifications } = useSelector((state) => state.notifications);
 
   const dispatch = useDispatch();
@@ -64,12 +64,16 @@ export const Home = () => {
               </Box>
             </ModalBody>
             <Flex direction="row" p="2" align="center">
-              <Avatar name="Kent Dodds" src={user.profileImg} size="sm" />
+              <Avatar
+                name="Kent Dodds"
+                src={loggedInUser.profileImg}
+                size="sm"
+              />
               <Flex ml="3" direction="column" w="100%">
                 <Flex direction="row">
-                  <Text fontWeight="bold">{user.name}</Text>
+                  <Text fontWeight="bold">{loggedInUser.name}</Text>
                   <Text fontSize="sm" color="gray.500" ml="3">
-                    @{user.userName}
+                    @{loggedInUser.userName}
                   </Text>
                 </Flex>
                 <Textarea
@@ -84,7 +88,13 @@ export const Home = () => {
                 colorScheme="teal"
                 disabled={reply === "" ? true : false}
                 onClick={() =>
-                  commentHandler(postModal, reply, onClose, user, dispatch)
+                  commentHandler(
+                    postModal,
+                    reply,
+                    onClose,
+                    loggedInUser,
+                    dispatch
+                  )
                 }
               >
                 Reply
@@ -113,7 +123,9 @@ export const Home = () => {
             rePosts,
             comments,
           } = post;
-          const isLiked = likes.find((like) => like.userName === user.userName);
+          const isLiked = likes.find(
+            (like) => like.userName === loggedInUser.userName
+          );
           return (
             <Box
               w={["100vw", "100vw", "45vw", "45vw"]}
@@ -142,7 +154,11 @@ export const Home = () => {
                 p="3"
                 fontSize="xl"
               >
-                <Box onClick={() => likeHandler(isLiked, post, user, dispatch)}>
+                <Box
+                  onClick={() =>
+                    likeHandler(isLiked, post, loggedInUser, dispatch)
+                  }
+                >
                   {isLiked ? <FcLike /> : <FcLikePlaceholder fontSize="2xl" />}
                 </Box>
                 <Text fontSize="sm" ml="1">

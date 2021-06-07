@@ -6,8 +6,10 @@ import { Avatar } from "@chakra-ui/avatar";
 import { Button } from "@chakra-ui/button";
 import { Link } from "react-router-dom";
 import { IoMdArrowRoundBack, IoMdPersonAdd } from "react-icons/io";
+import { useSelector } from "react-redux";
 
 export const Following = () => {
+  const { userProfile } = useSelector((state) => state.user);
   return (
     <Flex
       w="100vw"
@@ -25,7 +27,7 @@ export const Following = () => {
         my="2"
         px="2"
       >
-        <Link to="/timeline">
+        <Link to={`/timeline/${userProfile.userName}`}>
           <Button variant="ghost" fontSize="xl">
             <IoMdArrowRoundBack />
           </Button>

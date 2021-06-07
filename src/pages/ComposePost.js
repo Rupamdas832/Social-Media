@@ -12,8 +12,8 @@ import { v4 as uuid } from "uuid";
 export const ComposePost = () => {
   const [content, setContent] = useState("");
 
-  const { user } = useSelector((state) => state.user);
-  const { userName, name, profileImg } = user;
+  const { loggedInUser } = useSelector((state) => state.user);
+  const { userName, name, profileImg } = loggedInUser;
 
   const dispatch = useDispatch();
 
@@ -29,6 +29,7 @@ export const ComposePost = () => {
       likes: [],
       rePosts: 0,
       comments: [],
+      createdAt: new Date(),
     };
     dispatch(composePost({ newPost: newPost }));
     setContent("");

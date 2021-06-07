@@ -10,3 +10,4 @@ export { ComposePost } from "./ComposePost";
 export { Following } from "./Following";
 export { Followers } from "./Followers";
 export { Post } from "./Post";
+export { Search } from "./Search";

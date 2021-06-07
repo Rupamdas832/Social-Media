@@ -4,12 +4,21 @@ import { Flex } from "@chakra-ui/layout";
 import React from "react";
 import { AiOutlineHome } from "react-icons/ai";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { IoIosAddCircleOutline } from "react-icons/io";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { IoIosAddCircleOutline, IoIosSearch } from "react-icons/io";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loadUserProfile } from "../features/user/userSlice";
 
 export const Footer = () => {
-  const { user } = useSelector((state) => state.user);
+  const { loggedInUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const loadUserHandler = () => {
+    dispatch(loadUserProfile({ userProfile: loggedInUser }));
+    navigate(`/timeline/${loggedInUser.userName}`);
+  };
+
   return (
     <Flex
       w="100vw"
@@ -25,10 +34,14 @@ export const Footer = () => {
       borderTop="2px"
       borderColor="gray.300"
     >
-      {user && (
+      {loggedInUser && (
         <Flex direction="row" align="center" w={["100%", "100%", "60%", "60%"]}>
           <Link to="/">
             <AiOutlineHome />
+          </Link>
+          <Spacer />
+          <Link to="/search">
+            <IoIosSearch />
           </Link>
           <Spacer />
           <Link to="/compose">
@@ -39,9 +52,12 @@ export const Footer = () => {
             <IoNotificationsOutline />
           </Link>
           <Spacer />
-          <Link to="/timeline">
-            <Avatar size="sm" name="Christian Nwamba" src={user.profileImg} />
-          </Link>
+          <Avatar
+            size="sm"
+            name="Christian Nwamba"
+            src={loggedInUser.profileImg}
+            onClick={() => loadUserHandler()}
+          />
         </Flex>
       )}
     </Flex>

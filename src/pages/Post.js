@@ -25,7 +25,7 @@ import { commentHandler, likeHandler } from "../features/posts";
 
 export const Post = () => {
   const { posts, postModal } = useSelector((state) => state.posts);
-  const { user } = useSelector((state) => state.user);
+  const { loggedInUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -70,12 +70,16 @@ export const Post = () => {
               </Box>
             </ModalBody>
             <Flex direction="row" p="2" align="center">
-              <Avatar name="Kent Dodds" src={user.profileImg} size="sm" />
+              <Avatar
+                name="Kent Dodds"
+                src={loggedInUser.profileImg}
+                size="sm"
+              />
               <Flex ml="3" direction="column" w="100%">
                 <Flex direction="row">
-                  <Text fontWeight="bold">{user.name}</Text>
+                  <Text fontWeight="bold">{loggedInUser.name}</Text>
                   <Text fontSize="sm" color="gray.500" ml="3">
-                    @{user.userName}
+                    @{loggedInUser.userName}
                   </Text>
                 </Flex>
                 <Textarea
@@ -90,7 +94,13 @@ export const Post = () => {
                 colorScheme="teal"
                 disabled={reply === "" ? true : false}
                 onClick={() =>
-                  commentHandler(postModal, reply, onClose, user, dispatch)
+                  commentHandler(
+                    postModal,
+                    reply,
+                    onClose,
+                    loggedInUser,
+                    dispatch
+                  )
                 }
               >
                 Reply
@@ -110,7 +120,9 @@ export const Post = () => {
           rePosts,
           comments,
         } = post;
-        const isLiked = likes.find((like) => like.userName === user.userName);
+        const isLiked = likes.find(
+          (like) => like.userName === loggedInUser.userName
+        );
         if (_id === postId) {
           return (
             <Box
@@ -138,7 +150,11 @@ export const Post = () => {
                 p="3"
                 fontSize="xl"
               >
-                <Box onClick={() => likeHandler(isLiked, post, user, dispatch)}>
+                <Box
+                  onClick={() =>
+                    likeHandler(isLiked, post, loggedInUser, dispatch)
+                  }
+                >
                   {isLiked ? <FcLike /> : <FcLikePlaceholder fontSize="2xl" />}
                 </Box>
                 <Text fontSize="sm" ml="1">

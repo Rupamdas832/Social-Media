@@ -24,9 +24,10 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { loadPostOnModal } from "../features/posts/postsSlice";
+import { followButtonClicked } from "../features/user/userSlice";
 
 export const Timeline = () => {
-  const { user } = useSelector((state) => state.user);
+  const { userProfile, loggedInUser } = useSelector((state) => state.user);
   const {
     userName,
     name,
@@ -36,7 +37,11 @@ export const Timeline = () => {
     coverImg,
     bio,
     website,
-  } = user;
+  } = userProfile;
+
+  const isFollowing = loggedInUser.following.find(
+    (item) => item.userName === userName
+  );
 
   const { posts, postModal } = useSelector((state) => state.posts);
 
@@ -51,6 +56,25 @@ export const Timeline = () => {
   const commentModalHandler = (post) => {
     dispatch(loadPostOnModal({ post }));
     onOpen();
+  };
+
+  const followUserHandler = () => {
+    const newFollowing = {
+      userName: userName,
+      profileImg: profileImg,
+      name: name,
+    };
+    const newFollower = {
+      userName: loggedInUser.userName,
+      profileImg: loggedInUser.profileImg,
+      name: loggedInUser.name,
+    };
+    dispatch(
+      followButtonClicked({
+        newFollowing: newFollowing,
+        newFollower: newFollower,
+      })
+    );
   };
 
   useEffect(() => {
@@ -85,12 +109,16 @@ export const Timeline = () => {
               </Box>
             </ModalBody>
             <Flex direction="row" p="2" align="center">
-              <Avatar name="Kent Dodds" src={user.profileImg} size="sm" />
+              <Avatar
+                name="Kent Dodds"
+                src={userProfile.profileImg}
+                size="sm"
+              />
               <Flex ml="3" direction="column" w="100%">
                 <Flex direction="row">
-                  <Text fontWeight="bold">{user.name}</Text>
+                  <Text fontWeight="bold">{userProfile.name}</Text>
                   <Text fontSize="sm" color="gray.500" ml="3">
-                    @{user.userName}
+                    @{userProfile.userName}
                   </Text>
                 </Flex>
                 <Textarea
@@ -105,7 +133,13 @@ export const Timeline = () => {
                 colorScheme="teal"
                 disabled={reply === "" ? true : false}
                 onClick={() =>
-                  commentHandler(postModal, reply, onClose, user, dispatch)
+                  commentHandler(
+                    postModal,
+                    reply,
+                    onClose,
+                    userProfile,
+                    dispatch
+                  )
                 }
               >
                 Reply
@@ -172,6 +206,33 @@ export const Timeline = () => {
           <BiLink />
           <Text>{website}</Text>
         </Flex>
+        {userProfile.userName === loggedInUser.userName ? null : (
+          <Flex
+            direction="row"
+            px="2"
+            my="3"
+            w="100%"
+            justifyContent="space-around"
+          >
+            {isFollowing === undefined ? (
+              <Button
+                colorScheme="teal"
+                px="6"
+                onClick={() => followUserHandler()}
+              >
+                Follow
+              </Button>
+            ) : (
+              <Button colorScheme="teal" variant="outline">
+                Following
+              </Button>
+            )}
+
+            <Button variant="outline" colorScheme="teal">
+              Message
+            </Button>
+          </Flex>
+        )}
         <Divider />
         {userPosts.length === 0 ? (
           <Text mt="5" fontSize="lg" fontWeight="medium" color="gray.400">
@@ -190,7 +251,7 @@ export const Timeline = () => {
               comments,
             } = post;
             const isLiked = likes.find(
-              (like) => like.userName === user.userName
+              (like) => like.userName === userProfile.userName
             );
             return (
               <Box
@@ -221,7 +282,9 @@ export const Timeline = () => {
                   fontSize="xl"
                 >
                   <Box
-                    onClick={() => likeHandler(isLiked, post, user, dispatch)}
+                    onClick={() =>
+                      likeHandler(isLiked, post, userProfile, dispatch)
+                    }
                   >
                     {isLiked ? (
                       <FcLike />

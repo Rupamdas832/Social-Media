@@ -32,6 +32,18 @@ export const LoginAPI = (userName, password) => {
   });
 };
 
+export const UsersAPI = () => {
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      res({
+        status: 200,
+        success: true,
+        data: { users: UsersData },
+      });
+    }, 1000);
+  });
+};
+
 export const PostsAPI = () => {
   return new Promise((res, rej) => {
     setTimeout(() => {

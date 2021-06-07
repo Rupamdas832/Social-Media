@@ -12,7 +12,11 @@ import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LoginAPI, NotificationsAPI } from "../api/ApiCall";
 import Photo from "../assets/Asset880.svg";
-import { loadNotifications, loadUser } from "../features/user/userSlice";
+import {
+  loadNotifications,
+  loadLoggedInUser,
+  loadUserProfile,
+} from "../features/user/userSlice";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { Alert } from "@chakra-ui/alert";
 import { AlertIcon } from "@chakra-ui/alert";
@@ -70,13 +74,14 @@ export const Login = () => {
           user,
           token,
         };
-        dispatch(loadUser(newUser));
+        dispatch(loadLoggedInUser(newUser));
+        dispatch(loadUserProfile({ userProfile: user }));
         //fetchNotifications(user._id);
         navigate(state?.from ? state.from : "/");
         toast({
           title: "Successfully logged In.",
           status: "success",
-          duration: 2000,
+          duration: 1000,
           isClosable: true,
         });
       }

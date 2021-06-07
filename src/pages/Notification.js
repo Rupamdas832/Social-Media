@@ -10,11 +10,11 @@ import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 
 export const Notification = () => {
-  const { user } = useSelector((state) => state.user);
+  const { loggedInUser } = useSelector((state) => state.user);
 
   const { allUsersNotifications } = useSelector((state) => state.notifications);
   const { items } = allUsersNotifications.find(
-    (item) => item.userId === user._id
+    (item) => item.userId === loggedInUser._id
   );
 
   return (

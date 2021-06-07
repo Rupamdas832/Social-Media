@@ -13,10 +13,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { editProfile } from "../features/user/userSlice";
 
 export const ProfileEdit = () => {
-  const { user } = useSelector((state) => state.user);
-  const [name, setName] = useState(user.name);
-  const [bio, setBio] = useState(user.bio);
-  const [website, setWebsite] = useState(user.website);
+  const { loggedInUser } = useSelector((state) => state.user);
+  const [name, setName] = useState(loggedInUser.name);
+  const [bio, setBio] = useState(loggedInUser.bio);
+  const [website, setWebsite] = useState(loggedInUser.website);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ export const ProfileEdit = () => {
       >
         <Box h="150px" w="100%" bg="red.200">
           <Image
-            src={user.coverImg}
+            src={loggedInUser.coverImg}
             alt="Segun Adebayo"
             h="100%"
             w="100%"
@@ -58,7 +58,7 @@ export const ProfileEdit = () => {
           <Avatar
             size="xl"
             name="Christian Nwamba"
-            src={user.profileImg}
+            src={loggedInUser.profileImg}
             mt="-5"
             border="2px"
             borderColor="white"
