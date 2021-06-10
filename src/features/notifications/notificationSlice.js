@@ -17,10 +17,16 @@ const notificationSlice = createSlice({
         foundUserNoticationsByUserId.items.push(action.payload.newNotification);
       }
     },
+    addNewNotificationDataToList: (state, action) => {
+      state.allUsersNotifications.push(action.payload.newNotificationData);
+    },
   },
 });
 
-export const { loadAllNotifications, updateNotification } =
-  notificationSlice.actions;
+export const {
+  loadAllNotifications,
+  updateNotification,
+  addNewNotificationDataToList,
+} = notificationSlice.actions;
 
 export default notificationSlice.reducer;

@@ -20,8 +20,8 @@ export const Following = () => {
   return (
     <Flex
       w="100vw"
+      minH="100vh"
       direction="column"
-      justify="center"
       align="center"
       position="relative"
       pt="20"
@@ -76,7 +76,7 @@ export const Following = () => {
                 <Flex direction="column" px="2">
                   <Text fontWeight="semibold">{name}</Text>
                   <Text color="gray.500" fontWeight="light">
-                    {userName}
+                    @{userName}
                   </Text>
                 </Flex>
 

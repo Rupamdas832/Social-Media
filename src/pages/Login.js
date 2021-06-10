@@ -13,14 +13,13 @@ import {
   Alert,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LoginAPI, NotificationsAPI } from "../api/ApiCall";
 import Photo from "../assets/Asset880.svg";
 import {
   loadNotifications,
   loadLoggedInUser,
-  loadUserProfile,
 } from "../features/user/userSlice";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 
@@ -30,6 +29,8 @@ export const Login = () => {
   const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const handleClick = () => setShow(!show);
+
+  const { themeColor, themeMode } = useSelector((state) => state.theme);
 
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -77,7 +78,6 @@ export const Login = () => {
           token,
         };
         dispatch(loadLoggedInUser(newUser));
-        dispatch(loadUserProfile({ userProfile: user }));
         //fetchNotifications(user._id);
         navigate(state?.from ? state.from : "/");
         toast({
@@ -100,8 +100,11 @@ export const Login = () => {
       align="center"
       justify="center"
       position="relative"
-      bg="white"
       zIndex="2"
+      style={{
+        backgroundColor: `${themeColor[themeMode].bg}`,
+        color: `${themeColor[themeMode].color}`,
+      }}
     >
       <Flex
         display={["none", "none", "flex", "flex"]}
@@ -137,7 +140,12 @@ export const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <InputRightElement width="4.5rem">
-              <Button h="1.75rem" size="sm" onClick={handleClick}>
+              <Button
+                h="1.75rem"
+                size="sm"
+                onClick={handleClick}
+                variant="outline"
+              >
                 {show ? <BsEye /> : <BsEyeSlash />}
               </Button>
             </InputRightElement>

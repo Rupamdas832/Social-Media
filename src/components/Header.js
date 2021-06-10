@@ -7,18 +7,32 @@ import { MenuList } from "@chakra-ui/menu";
 import { MenuItem } from "@chakra-ui/menu";
 import { MenuButton } from "@chakra-ui/menu";
 import { Menu } from "@chakra-ui/menu";
-import React from "react";
+import { Switch } from "@chakra-ui/switch";
+import React, { useEffect, useState } from "react";
 import { IoSettingsOutline } from "react-icons/io5";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { toggleThemeMode } from "../features/theme/themeSlice";
 import { logoutUser } from "../features/user/userSlice";
 
 export const Header = () => {
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  const { themeMode, themeColor } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
 
   const logoutHandler = () => {
     dispatch(logoutUser());
   };
+
+  useEffect(() => {
+    if (isDarkTheme) {
+      dispatch(toggleThemeMode("dark"));
+    } else {
+      dispatch(toggleThemeMode("light"));
+    }
+  }, [isDarkTheme]);
+
   return (
     <Flex
       justify="center"
@@ -29,6 +43,10 @@ export const Header = () => {
       zIndex="2"
       borderBottom="2px"
       borderColor="gray.200"
+      style={{
+        backgroundColor: `${themeColor[themeMode].bg}`,
+        color: `${themeColor[themeMode].color}`,
+      }}
     >
       <Flex
         direction="row"
@@ -43,16 +61,49 @@ export const Header = () => {
         </Box>
         <Spacer />
         <Menu>
-          <MenuButton as={Button}>
+          <MenuButton
+            as={Button}
+            style={{
+              backgroundColor: `${themeColor[themeMode].bg}`,
+              color: `${themeColor[themeMode].color}`,
+            }}
+          >
             <IoSettingsOutline />
           </MenuButton>
           <MenuList>
             <Link to="/settings/profile">
-              <MenuItem>Edit Profile</MenuItem>
+              <MenuItem
+                style={{
+                  backgroundColor: `${themeColor[themeMode].bg}`,
+                  color: `${themeColor[themeMode].color}`,
+                }}
+              >
+                Edit Profile
+              </MenuItem>
             </Link>
-            <MenuItem>Theme</MenuItem>
+            <MenuItem
+              style={{
+                backgroundColor: `${themeColor[themeMode].bg}`,
+                color: `${themeColor[themeMode].color}`,
+              }}
+            >
+              <Text>{isDarkTheme ? "Dark" : "Light"}</Text>
+              <Switch
+                ml="3"
+                isChecked={isDarkTheme}
+                onChange={() => setIsDarkTheme(!isDarkTheme)}
+              />
+            </MenuItem>
             <Link to="/login">
-              <MenuItem onClick={() => logoutHandler()}>Logout</MenuItem>
+              <MenuItem
+                onClick={() => logoutHandler()}
+                style={{
+                  backgroundColor: `${themeColor[themeMode].bg}`,
+                  color: `${themeColor[themeMode].color}`,
+                }}
+              >
+                Logout
+              </MenuItem>
             </Link>
           </MenuList>
         </Menu>

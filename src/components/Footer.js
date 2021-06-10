@@ -7,20 +7,18 @@ import { IoNotifications, IoNotificationsOutline } from "react-icons/io5";
 import { IoIosAddCircle, IoIosAddCircleOutline } from "react-icons/io";
 import { RiSearchFill, RiSearchLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { loadUserProfile } from "../features/user/userSlice";
+import { useSelector } from "react-redux";
 
 export const Footer = () => {
   const { loggedInUser } = useSelector((state) => state.user);
+  const { themeMode, themeColor } = useSelector((state) => state.theme);
 
   const [route, setRoute] = useState("");
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const loadUserHandler = () => {
     setRoute("");
-    dispatch(loadUserProfile({ userProfile: loggedInUser }));
     navigate(`/timeline/${loggedInUser.userName}`);
   };
 
@@ -32,12 +30,15 @@ export const Footer = () => {
       justify="center"
       position="fixed"
       bottom="0"
-      bg="white"
       fontSize="2xl"
       py="1"
       px="4"
       borderTop="2px"
       borderColor="gray.300"
+      style={{
+        backgroundColor: `${themeColor[themeMode].bg}`,
+        color: `${themeColor[themeMode].color}`,
+      }}
     >
       {loggedInUser && (
         <Flex direction="row" align="center" w={["100%", "100%", "60%", "60%"]}>

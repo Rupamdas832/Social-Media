@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import { AllNotificationsAPI, PostsAPI, UsersAPI } from "./api/ApiCall";
 import "./App.css";
@@ -25,6 +25,7 @@ import {
 } from "./pages";
 
 const App = () => {
+  const { themeMode, themeColor } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
   const fetchPosts = async () => {
     try {
@@ -74,13 +75,19 @@ const App = () => {
     fetchUsers();
   }, []);
   return (
-    <div className="App">
+    <div
+      className="App"
+      style={{
+        backgroundColor: `${themeColor[themeMode].bg}`,
+        color: `${themeColor[themeMode].color}`,
+      }}
+    >
       <Header />
       <Routes>
         <PrivateRoute path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/getting-started" element={<GettingStarted />} />
+        <PrivateRoute path="/getting-started" element={<GettingStarted />} />
         <PrivateRoute
           path="/timeline/:userNameFromParam"
           element={<Timeline />}

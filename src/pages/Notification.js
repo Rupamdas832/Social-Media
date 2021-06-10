@@ -15,23 +15,27 @@ export const Notification = () => {
     (item) => item.userId === loggedInUser._id
   );
 
+  const sortedItems = items
+    .slice()
+    .sort((a, b) => new Date(b["createdAt"]) - new Date(a["createdAt"]));
+
   return (
     <Flex
       w="100vw"
+      minH="100vh"
       direction="column"
-      justify="center"
       align="center"
       position="relative"
       pt="16"
       pb="20"
     >
       <Text>Notifications</Text>
-      {items.length === 0 ? (
+      {sortedItems.length === 0 ? (
         <Text fontSize="lg" color="gray.500" mt="5">
           No notifications
         </Text>
       ) : (
-        items.map((notification) => {
+        sortedItems.map((notification) => {
           const { profileImg, name, type, _id, createdAt, postId, userName } =
             notification;
           if (type === "liked") {

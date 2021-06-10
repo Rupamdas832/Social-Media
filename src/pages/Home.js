@@ -23,6 +23,7 @@ import { PostCard } from "../components/PostCard";
 export const Home = () => {
   const { posts, postModal } = useSelector((state) => state.posts);
   const { loggedInUser } = useSelector((state) => state.user);
+  const { themeColor, themeMode } = useSelector((state) => state.theme);
 
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -34,11 +35,15 @@ export const Home = () => {
     onOpen();
   };
 
+  const sortedPosts = posts
+    .slice()
+    .sort((a, b) => new Date(b["createdAt"]) - new Date(a["createdAt"]));
+
   return (
     <Flex
       w="100vw"
+      minH="100vh"
       direction="column"
-      justify="center"
       align="center"
       position="relative"
       pt="16"
@@ -47,7 +52,12 @@ export const Home = () => {
       {postModal && (
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent
+            style={{
+              backgroundColor: `${themeColor[themeMode].bg}`,
+              color: `${themeColor[themeMode].color}`,
+            }}
+          >
             <ModalCloseButton />
             <ModalBody>
               <Flex direction="row" p="2" align="center">
@@ -101,7 +111,7 @@ export const Home = () => {
           </ModalContent>
         </Modal>
       )}
-      {posts === null ? (
+      {sortedPosts === null ? (
         <Spinner
           thickness="4px"
           speed="0.65s"
@@ -110,7 +120,7 @@ export const Home = () => {
           size="xl"
         />
       ) : (
-        posts.map((post) => {
+        sortedPosts.map((post) => {
           return (
             <PostCard
               post={post}

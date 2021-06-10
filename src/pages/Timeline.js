@@ -28,6 +28,8 @@ import { followUserHandler } from "../features/user/followUserHandler";
 export const Timeline = () => {
   const { loggedInUser, usersList } = useSelector((state) => state.user);
   const { posts, postModal } = useSelector((state) => state.posts);
+  const { themeColor, themeMode } = useSelector((state) => state.theme);
+
   const dispatch = useDispatch();
 
   const [reply, setReply] = useState("");
@@ -41,6 +43,9 @@ export const Timeline = () => {
   );
   let userPosts = [];
   userPosts = posts.filter((post) => post.userName === userNameFromParam);
+  const sortedUserPosts = userPosts
+    .slice()
+    .sort((a, b) => new Date(b["createdAt"]) - new Date(a["createdAt"]));
 
   const commentModalHandler = (post) => {
     dispatch(loadPostOnModal({ post }));
@@ -64,7 +69,12 @@ export const Timeline = () => {
       {postModal && (
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent
+            style={{
+              backgroundColor: `${themeColor[themeMode].bg}`,
+              color: `${themeColor[themeMode].color}`,
+            }}
+          >
             <ModalCloseButton />
             <ModalBody>
               <Flex direction="row" p="2" align="center">
@@ -231,12 +241,12 @@ export const Timeline = () => {
                 </Flex>
               )}
               <Divider />
-              {userPosts.length === 0 ? (
+              {sortedUserPosts.length === 0 ? (
                 <Text mt="5" fontSize="lg" fontWeight="medium" color="gray.400">
                   Compose your first post
                 </Text>
               ) : (
-                userPosts.map((post) => {
+                sortedUserPosts.map((post) => {
                   return (
                     <PostCard
                       post={post}

@@ -42,6 +42,7 @@ export const ComposePost = () => {
   return (
     <Flex
       w="100vw"
+      minH="100vh"
       direction="column"
       align="center"
       position="relative"

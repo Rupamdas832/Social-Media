@@ -24,6 +24,8 @@ import { PostCard } from "../components/PostCard";
 export const Post = () => {
   const { posts, postModal } = useSelector((state) => state.posts);
   const { loggedInUser } = useSelector((state) => state.user);
+  const { themeColor, themeMode } = useSelector((state) => state.theme);
+
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -43,8 +45,8 @@ export const Post = () => {
   return (
     <Flex
       w="100vw"
+      minH="100vh"
       direction="column"
-      justify="center"
       align="center"
       position="relative"
       pt="16"
@@ -53,7 +55,12 @@ export const Post = () => {
       {postModal && (
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent
+            style={{
+              backgroundColor: `${themeColor[themeMode].bg}`,
+              color: `${themeColor[themeMode].color}`,
+            }}
+          >
             <ModalCloseButton />
             <ModalBody>
               <Flex direction="row" p="2" align="center">
@@ -113,12 +120,23 @@ export const Post = () => {
             <Flex
               direction="column"
               key={post._id}
-              bg="gray.200"
               mt="5"
               rounded="lg"
+              style={{
+                backgroundColor: `${themeColor[themeMode].bg}`,
+                color: `${themeColor[themeMode].color}`,
+              }}
             >
               <PostCard post={post} commentModalHandler={commentModalHandler} />
-              <Flex direction="column" mt="3" px="2" bg="white">
+              <Flex
+                direction="column"
+                mt="3"
+                px="2"
+                style={{
+                  backgroundColor: `${themeColor[themeMode].bg}`,
+                  color: `${themeColor[themeMode].color}`,
+                }}
+              >
                 {post.comments.map((comment) => {
                   return (
                     <Flex
