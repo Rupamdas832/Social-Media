@@ -22,6 +22,7 @@ export const PostCard = ({ post, commentModalHandler }) => {
   } = post;
 
   const { loggedInUser } = useSelector((state) => state.user);
+  const { themeColor, themeMode } = useSelector((state) => state.theme);
 
   const dispatch = useDispatch();
 
@@ -30,11 +31,11 @@ export const PostCard = ({ post, commentModalHandler }) => {
   return (
     <Box
       w={["100vw", "100vw", "45vw", "45vw"]}
-      borderWidth="1px"
-      borderRadius="lg"
+      borderY="1px"
       overflow="hidden"
       mt="5"
       key={_id}
+      style={{ border: `1px solid ${themeColor[themeMode].border}` }}
     >
       <Link to={`/timeline/${userName}`}>
         <Flex direction="row" p="2" align="center">

@@ -28,6 +28,8 @@ export const GettingStarted = () => {
   );
 
   const { loggedInUser } = useSelector((state) => state.user);
+  const { themeColor, themeMode } = useSelector((state) => state.theme);
+
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -87,8 +89,11 @@ export const GettingStarted = () => {
       align="center"
       justify="center"
       position="relative"
-      bg="white"
       zIndex="2"
+      style={{
+        backgroundColor: `${themeColor[themeMode].bg}`,
+        color: `${themeColor[themeMode].color}`,
+      }}
     >
       <Flex
         w={["100vw", "100vw", "45vw", "45vw"]}
@@ -157,7 +162,14 @@ export const GettingStarted = () => {
         </FormControl>
         <FormControl px="2" mt="2">
           <FormLabel>Bio</FormLabel>
-          <Textarea value={bio} onChange={(e) => setBio(e.target.value)} />
+          <Textarea
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            maxLength={120}
+          />
+          <Text color="gray.700" textAlign="right" mr="5">
+            {120 - bio.length}
+          </Text>
         </FormControl>
         <FormControl px="2" mt="2">
           <FormLabel>Website</FormLabel>
@@ -174,6 +186,9 @@ export const GettingStarted = () => {
           onClick={() => profileDetailHandler()}
         >
           Save
+        </Button>
+        <Button variant="ghost" onClick={() => profileDetailHandler()}>
+          Skip
         </Button>
       </Flex>
     </Flex>

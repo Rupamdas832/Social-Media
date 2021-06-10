@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 
 export const Notification = () => {
   const { loggedInUser } = useSelector((state) => state.user);
+  const { themeColor, themeMode } = useSelector((state) => state.theme);
 
   const { allUsersNotifications } = useSelector((state) => state.notifications);
   const { items } = allUsersNotifications.find(
@@ -43,9 +44,10 @@ export const Notification = () => {
               <Flex
                 w={["100vw", "100vw", "45vw", "45vw"]}
                 direction="column"
-                border="1px"
-                borderColor="gray.200"
                 key={_id}
+                style={{
+                  borderBottom: `1px solid ${themeColor[themeMode].border}`,
+                }}
               >
                 <Link to={`/post/${postId}`}>
                   <Flex direction="row" w="100%" mt="2" px="2" py="3">
@@ -76,9 +78,10 @@ export const Notification = () => {
               <Flex
                 w={["100vw", "100vw", "45vw", "45vw"]}
                 direction="column"
-                border="1px"
-                borderColor="gray.200"
                 key={_id}
+                style={{
+                  borderBottom: `1px solid ${themeColor[themeMode].border}`,
+                }}
               >
                 <Link to={`/post/${postId}`}>
                   <Flex direction="row" w="100%" mt="2" px="2" py="3">
@@ -109,9 +112,10 @@ export const Notification = () => {
               <Flex
                 w={["100vw", "100vw", "45vw", "45vw"]}
                 direction="column"
-                border="1px"
-                borderColor="gray.200"
                 key={_id}
+                style={{
+                  borderBottom: `1px solid ${themeColor[themeMode].border}`,
+                }}
               >
                 <Link to={`/timeline/${userName}`}>
                   <Flex direction="row" w="100%" mt="2" px="2" py="3">

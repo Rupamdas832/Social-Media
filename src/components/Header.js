@@ -55,7 +55,12 @@ export const Header = () => {
         w={["100%", "100%", "60%", "60%"]}
       >
         <Box>
-          <Text fontSize="3xl" fontWeight="medium" fontFamily="cursive">
+          <Text
+            fontSize="3xl"
+            fontWeight="bold"
+            fontFamily="cursive"
+            color="teal"
+          >
             Grader
           </Text>
         </Box>

@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 
 export const Followers = () => {
   const { usersList, loggedInUser } = useSelector((state) => state.user);
+  const { themeColor, themeMode } = useSelector((state) => state.theme);
 
   const { userNameFromParam } = useParams();
 
@@ -61,6 +62,9 @@ export const Followers = () => {
               direction="column"
               align="center"
               key={_id}
+              style={{
+                borderBottom: `1px solid ${themeColor[themeMode].border}`,
+              }}
             >
               <Flex
                 direction="row"
@@ -69,8 +73,6 @@ export const Followers = () => {
                 mt="2"
                 px="2"
                 py="3"
-                border="1px"
-                borderColor="gray.200"
               >
                 <Avatar size="sm" name="Prosper Otemuyiwa" src={profileImg} />
                 <Flex direction="column" px="2">

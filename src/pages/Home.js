@@ -56,6 +56,7 @@ export const Home = () => {
             style={{
               backgroundColor: `${themeColor[themeMode].bg}`,
               color: `${themeColor[themeMode].color}`,
+              border: `1px solid ${themeColor[themeMode].color}`,
             }}
           >
             <ModalCloseButton />

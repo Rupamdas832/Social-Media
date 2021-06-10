@@ -59,8 +59,8 @@ export const Timeline = () => {
   return (
     <Flex
       w="100vw"
+      minH="100vh"
       direction="column"
-      justify="center"
       align="center"
       position="relative"
       pt="16"
@@ -73,6 +73,7 @@ export const Timeline = () => {
             style={{
               backgroundColor: `${themeColor[themeMode].bg}`,
               color: `${themeColor[themeMode].color}`,
+              border: `1px solid ${themeColor[themeMode].color}`,
             }}
           >
             <ModalCloseButton />

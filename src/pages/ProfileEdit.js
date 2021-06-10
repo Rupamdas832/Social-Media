@@ -25,7 +25,7 @@ export const ProfileEdit = () => {
 
   const changeProfileHandler = () => {
     dispatch(editProfile({ name: name, bio: bio, website: website }));
-    navigate("/timeline");
+    navigate(`/timeline/${loggedInUser.userName}`);
   };
 
   useEffect(() => {

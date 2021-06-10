@@ -8,10 +8,12 @@ export const themeSlice = createSlice({
       light: {
         bg: "white",
         color: "black",
+        border: "#E2E8F0",
       },
       dark: {
         bg: "black",
         color: "#CBD5E0",
+        border: "#2D3748",
       },
     },
   },
