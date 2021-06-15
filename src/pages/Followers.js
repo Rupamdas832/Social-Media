@@ -6,17 +6,18 @@ import { Spacer } from "@chakra-ui/layout";
 import { Avatar } from "@chakra-ui/avatar";
 import { Button } from "@chakra-ui/button";
 import { Link, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { followUserHandler } from "../features/user/followUserHandler";
 
 export const Followers = () => {
-  const { usersList, loggedInUser } = useSelector((state) => state.user);
+  const { token, loggedInUser, userProfile } = useSelector(
+    (state) => state.user
+  );
   const { themeColor, themeMode } = useSelector((state) => state.theme);
 
-  const { userNameFromParam } = useParams();
+  const dispatch = useDispatch();
 
-  const { followers } = usersList.find(
-    (user) => user.userName === userNameFromParam
-  );
+  const { userNameFromParam } = useParams();
 
   return (
     <Flex
@@ -49,13 +50,16 @@ export const Followers = () => {
           <IoMdPersonAdd />
         </Button>
       </Flex>
-      {followers.length === 0 ? (
+      {userProfile.followers.length === 0 ? (
         <Text mt="5" color="gray.500">
           No Followers
         </Text>
       ) : (
-        followers.map((user) => {
-          const { name, userName, profileImg, _id } = user;
+        userProfile.followers.map((user) => {
+          const { name, userName, profileImg, _id, userId } = user;
+          const isFollowing = loggedInUser.following.find(
+            (user) => user.userName === userName
+          );
           return (
             <Flex
               w={["100vw", "100vw", "40vw", "40vw"]}
@@ -74,7 +78,9 @@ export const Followers = () => {
                 px="2"
                 py="3"
               >
-                <Avatar size="sm" name="Prosper Otemuyiwa" src={profileImg} />
+                <Link to={`/timeline/${userName}`}>
+                  <Avatar size="sm" name="Prosper Otemuyiwa" src={profileImg} />
+                </Link>
                 <Flex direction="column" px="2">
                   <Text fontWeight="semibold">{name}</Text>
                   <Text color="gray.500" fontWeight="light">
@@ -83,15 +89,39 @@ export const Followers = () => {
                 </Flex>
 
                 <Spacer />
-                <Button
-                  colorScheme="teal"
-                  variant="outline"
-                  px="4"
-                  borderRadius="xl"
-                  fontSize="sm"
-                >
-                  Follow
-                </Button>
+                {isFollowing === undefined ? (
+                  <>
+                    {userName === loggedInUser.userName ? null : (
+                      <Button
+                        colorScheme="teal"
+                        variant="outline"
+                        px="4"
+                        borderRadius="xl"
+                        fontSize="sm"
+                        onClick={() =>
+                          followUserHandler(
+                            userId,
+                            loggedInUser,
+                            token,
+                            dispatch
+                          )
+                        }
+                      >
+                        Follow
+                      </Button>
+                    )}
+                  </>
+                ) : (
+                  <Button
+                    colorScheme="teal"
+                    variant="outline"
+                    px="4"
+                    borderRadius="xl"
+                    fontSize="sm"
+                  >
+                    Following
+                  </Button>
+                )}
               </Flex>
             </Flex>
           );

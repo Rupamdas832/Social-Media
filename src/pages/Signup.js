@@ -12,30 +12,28 @@ import {
   AlertIcon,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Photo from "../assets/Asset880.svg";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { SignupAPI } from "../api/ApiCall";
-import {
-  addNewUserToUsersList,
-  loadLoggedInUser,
-} from "../features/user/userSlice";
-import { addNewNotificationDataToList } from "../features/notifications/notificationSlice";
-import { v4 } from "uuid";
+import { signupUser } from "../features/user/userSlice";
+import { loadUserNotification } from "../features/notifications/notificationSlice";
 
 export const Signup = () => {
   const [userName, setUserName] = useState();
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [error, setError] = useState("");
   const [show, setShow] = useState(false);
 
   const handleClick = () => setShow(!show);
 
   const { themeColor, themeMode } = useSelector((state) => state.theme);
+  const { loggedInUserStatus, userLoginError, token } = useSelector(
+    (state) => state.user
+  );
+  const { notificationStatus } = useSelector((state) => state.notifications);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -49,55 +47,32 @@ export const Signup = () => {
       duration: 2000,
       isClosable: true,
     });
-    try {
-      const {
-        status,
-        data: { user, token },
-      } = await SignupAPI(name, email, userName, password);
-      if (status === 201) {
-        const newUser = {
-          user: {
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            userName: user.userName,
-            password: user.password,
-            profileImg: " ",
-            coverImg: " ",
-            bio: " ",
-            website: " ",
-            followers: [],
-            following: [],
-          },
-          token: token,
-        };
-        const newNotificationData = {
-          _id: v4(),
-          userName: user.userName,
-          userId: user._id,
-          name: user.name,
-          items: [],
-        };
-        dispatch(loadLoggedInUser(newUser));
-        dispatch(addNewUserToUsersList({ user: user }));
-        dispatch(
-          addNewNotificationDataToList({
-            newNotificationData: newNotificationData,
-          })
-        );
-        //fetchNotifications(user._id);
-        navigate("/getting-started");
-        toast({
-          title: "Successfully Signed up.",
-          status: "success",
-          duration: 1000,
-          isClosable: true,
-        });
-      }
-    } catch (error) {
-      setError(error.response.data.message);
+    if (loggedInUserStatus === "idle") {
+      dispatch(
+        signupUser({
+          name: name,
+          email: email,
+          userName: userName,
+          password: password,
+        })
+      );
     }
   };
+
+  useEffect(() => {
+    if (loggedInUserStatus === "fulfilled") {
+      if (notificationStatus === "idle") {
+        dispatch(loadUserNotification({ token: token }));
+      }
+      navigate("/getting-started");
+      toast({
+        title: "Successfully logged In.",
+        status: "success",
+        duration: 1000,
+        isClosable: true,
+      });
+    }
+  }, [loggedInUserStatus]);
 
   return (
     <Flex
@@ -174,10 +149,10 @@ export const Signup = () => {
             </InputRightElement>
           </InputGroup>
         </FormControl>
-        {error && (
+        {userLoginError && (
           <Alert status="error">
             <AlertIcon />
-            {error}
+            {userLoginError}
           </Alert>
         )}
         <Button

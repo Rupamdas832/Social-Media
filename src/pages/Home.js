@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadPostOnModal } from "../features/posts/postsSlice";
+import { loadPostOnModal, loadPosts } from "../features/posts/postsSlice";
 import {
   Modal,
   ModalOverlay,
@@ -19,10 +19,13 @@ import {
 } from "@chakra-ui/react";
 import { commentHandler } from "../features/posts";
 import { PostCard } from "../components/PostCard";
+import axios from "axios";
+import { apiUrl } from "../api/ApiURL";
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
-  const { posts, postModal } = useSelector((state) => state.posts);
-  const { loggedInUser } = useSelector((state) => state.user);
+  const { posts, postModal, postStatus } = useSelector((state) => state.posts);
+  const { loggedInUser, token } = useSelector((state) => state.user);
   const { themeColor, themeMode } = useSelector((state) => state.theme);
 
   const dispatch = useDispatch();
@@ -36,8 +39,35 @@ export const Home = () => {
   };
 
   const sortedPosts = posts
-    .slice()
+    ?.slice()
     .sort((a, b) => new Date(b["createdAt"]) - new Date(a["createdAt"]));
+
+  useEffect(() => {
+    if (postStatus === "idle") {
+      dispatch(loadPosts());
+    }
+  }, [dispatch, postStatus]);
+
+  const navigate = useNavigate();
+  const authenticateUser = async () => {
+    try {
+      await axios.get(`${apiUrl}/user`, {
+        headers: { authorization: token },
+      });
+    } catch (error) {
+      console.log(error.response.data);
+      if (error.response.status === 401) {
+        navigate("/login");
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  useEffect(() => {
+    authenticateUser();
+  }, [token]);
 
   return (
     <Flex
@@ -102,6 +132,7 @@ export const Home = () => {
                     reply,
                     onClose,
                     loggedInUser,
+                    token,
                     dispatch
                   )
                 }
@@ -112,7 +143,7 @@ export const Home = () => {
           </ModalContent>
         </Modal>
       )}
-      {sortedPosts === null ? (
+      {postStatus !== "fulfilled" ? (
         <Spinner
           thickness="4px"
           speed="0.65s"

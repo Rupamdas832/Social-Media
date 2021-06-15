@@ -1,6 +1,6 @@
 import { BiLink } from "react-icons/bi";
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { commentHandler } from "../features/posts";
 import {
@@ -20,13 +20,19 @@ import {
   Flex,
   Spacer,
   Divider,
+  Spinner,
 } from "@chakra-ui/react";
 import { loadPostOnModal } from "../features/posts/postsSlice";
 import { PostCard } from "../components/PostCard";
 import { followUserHandler } from "../features/user/followUserHandler";
+import axios from "axios";
+import { loadUserProfile } from "../features/user/userSlice";
+import { apiUrl } from "../api/ApiURL";
 
 export const Timeline = () => {
-  const { loggedInUser, usersList } = useSelector((state) => state.user);
+  const { loggedInUser, token, userProfile } = useSelector(
+    (state) => state.user
+  );
   const { posts, postModal } = useSelector((state) => state.posts);
   const { themeColor, themeMode } = useSelector((state) => state.theme);
 
@@ -37,14 +43,36 @@ export const Timeline = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { userNameFromParam } = useParams();
+  const navigate = useNavigate();
+
+  const fetchUser = async () => {
+    try {
+      const {
+        status,
+        data: { user },
+      } = await axios.get(`${apiUrl}/user/${userNameFromParam}`, {
+        headers: { Authorization: token },
+      });
+      if (status === 200) {
+        dispatch(loadUserProfile({ user: user }));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [userNameFromParam]);
 
   const isFollowing = loggedInUser.following.find(
     (item) => item.userName === userNameFromParam
   );
+
   let userPosts = [];
-  userPosts = posts.filter((post) => post.userName === userNameFromParam);
+  userPosts = posts?.filter((post) => post.userName === userNameFromParam);
   const sortedUserPosts = userPosts
-    .slice()
+    ?.slice()
     .sort((a, b) => new Date(b["createdAt"]) - new Date(a["createdAt"]));
 
   const commentModalHandler = (post) => {
@@ -52,9 +80,25 @@ export const Timeline = () => {
     onOpen();
   };
 
+  const authenticateUser = async () => {
+    try {
+      await axios.get(`${apiUrl}/user`, {
+        headers: { authorization: token },
+      });
+    } catch (error) {
+      console.log(error.response.data);
+      if (error.response.status === 401) {
+        navigate("/login");
+      }
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  useEffect(() => {
+    authenticateUser();
+  }, [token]);
 
   return (
     <Flex
@@ -119,6 +163,7 @@ export const Timeline = () => {
                     reply,
                     onClose,
                     loggedInUser,
+                    token,
                     dispatch
                   )
                 }
@@ -129,101 +174,93 @@ export const Timeline = () => {
           </ModalContent>
         </Modal>
       )}
-      {usersList.map((user) => {
-        const {
-          _id,
-          userName,
-          name,
-          followers,
-          following,
-          profileImg,
-          coverImg,
-          bio,
-          website,
-        } = user;
-        if (userName === userNameFromParam) {
-          return (
-            <Flex
-              w={["100vw", "100vw", "45vw", "45vw"]}
-              direction="column"
-              align="center"
-              key={_id}
-            >
-              <Box
-                h={["150px", "200px", "250px", "250px"]}
+      <Flex>
+        {userProfile === null ? (
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
+        ) : (
+          <Flex
+            w={["100vw", "100vw", "45vw", "45vw"]}
+            direction="column"
+            align="center"
+            key={userProfile._id}
+          >
+            <Box h={["150px", "200px", "250px", "250px"]} w="100%" bg="red.200">
+              <Image
+                src={userProfile.coverImg}
+                alt="Segun Adebayo"
+                h="100%"
                 w="100%"
-                bg="red.200"
-              >
-                <Image
-                  src={coverImg}
-                  alt="Segun Adebayo"
-                  h="100%"
-                  w="100%"
-                  overflow
-                />
-              </Box>
-              <Flex w="100%" direction="row" align="center" px="8">
-                <Link to={`/${userName}/followers`}>
-                  <Flex direction="column" align="center">
-                    <Text fontWeight="bold" fontSize="lg">
-                      {followers.length}
-                    </Text>
-                    <Text fontSize="sm">Followers</Text>
-                  </Flex>
-                </Link>
-                <Spacer />
-                <Avatar
-                  size="xl"
-                  name="Christian Nwamba"
-                  src={profileImg}
-                  mt="-5"
-                  border="2px"
-                  borderColor="white"
-                />
-                <Spacer />
-                <Link to={`/${userName}/following`}>
-                  <Flex direction="column" align="center">
-                    <Text fontWeight="bold" fontSize="lg">
-                      {following.length}
-                    </Text>
-                    <Text fontSize="sm">Following</Text>
-                  </Flex>
-                </Link>
-              </Flex>
-              <Flex direction="row" my="5">
-                <Text fontWeight="medium" fontSize="lg">
-                  {name}{" "}
-                </Text>
-                <Text mx="2">|</Text>
-                <Text fontWeight="medium" fontSize="md" color="gray.500">
-                  @{userName}
-                </Text>
-              </Flex>
-              <Flex px="3" mb="5">
-                <Text>{bio}</Text>
-              </Flex>
-              <Flex direction="row" align="center" color="teal" w="100%">
-                <BiLink />
-                <Text>{website}</Text>
-              </Flex>
-              {loggedInUser.userName === userNameFromParam ? null : (
-                <Flex
-                  direction="row"
-                  px="2"
-                  my="3"
-                  w="100%"
-                  justifyContent="space-around"
-                >
+                overflow
+              />
+            </Box>
+            <Flex w="100%" direction="row" align="center" px="8">
+              <Link to={`/${userProfile.userName}/followers`}>
+                <Flex direction="column" align="center">
+                  <Text fontWeight="bold" fontSize="lg">
+                    {userProfile.followers.length}
+                  </Text>
+                  <Text fontSize="sm">Followers</Text>
+                </Flex>
+              </Link>
+              <Spacer />
+              <Avatar
+                size="xl"
+                name="Christian Nwamba"
+                src={userProfile.profileImg}
+                mt="-5"
+                border="2px"
+                borderColor="white"
+              />
+              <Spacer />
+              <Link to={`/${userProfile.userName}/following`}>
+                <Flex direction="column" align="center">
+                  <Text fontWeight="bold" fontSize="lg">
+                    {userProfile.following.length}
+                  </Text>
+                  <Text fontSize="sm">Following</Text>
+                </Flex>
+              </Link>
+            </Flex>
+            <Flex direction="row" my="5">
+              <Text fontWeight="medium" fontSize="lg">
+                {userProfile.name}{" "}
+              </Text>
+              <Text mx="2">|</Text>
+              <Text fontWeight="medium" fontSize="md" color="gray.500">
+                @{userProfile.userName}
+              </Text>
+            </Flex>
+            <Flex px="3" mb="5">
+              <Text>{userProfile.bio}</Text>
+            </Flex>
+            <Flex direction="row" align="center" color="teal" w="100%">
+              <BiLink />
+              <Text>{userProfile.website}</Text>
+            </Flex>
+            <Flex
+              direction="row"
+              px="2"
+              my="3"
+              w="100%"
+              justifyContent="space-around"
+            >
+              {userNameFromParam === loggedInUser.userName ? null : (
+                <>
                   {isFollowing === undefined ? (
                     <Button
                       colorScheme="teal"
                       px="6"
                       onClick={() =>
                         followUserHandler(
-                          userName,
-                          name,
-                          profileImg,
+                          userProfile._id,
                           loggedInUser,
+                          token,
                           dispatch
                         )
                       }
@@ -235,32 +272,31 @@ export const Timeline = () => {
                       Following
                     </Button>
                   )}
-
                   <Button variant="outline" colorScheme="teal">
                     Message
                   </Button>
-                </Flex>
-              )}
-              <Divider />
-              {sortedUserPosts.length === 0 ? (
-                <Text mt="5" fontSize="lg" fontWeight="medium" color="gray.400">
-                  Compose your first post
-                </Text>
-              ) : (
-                sortedUserPosts.map((post) => {
-                  return (
-                    <PostCard
-                      post={post}
-                      commentModalHandler={commentModalHandler}
-                      key={post._id}
-                    />
-                  );
-                })
+                </>
               )}
             </Flex>
-          );
-        } else return null;
-      })}
+            <Divider />
+            {sortedUserPosts?.length === 0 ? (
+              <Text mt="5" fontSize="lg" fontWeight="medium" color="gray.400">
+                Compose your first post
+              </Text>
+            ) : (
+              sortedUserPosts?.map((post) => {
+                return (
+                  <PostCard
+                    post={post}
+                    commentModalHandler={commentModalHandler}
+                    key={post._id}
+                  />
+                );
+              })
+            )}
+          </Flex>
+        )}
+      </Flex>
     </Flex>
   );
 };

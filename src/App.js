@@ -1,13 +1,9 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
-import { AllNotificationsAPI, PostsAPI, UsersAPI } from "./api/ApiCall";
 import "./App.css";
 import { Footer, PrivateRoute } from "./components";
 import { Header } from "./components/Header";
-import { loadAllNotifications } from "./features/notifications/notificationSlice";
-import { loadPosts } from "./features/posts/postsSlice";
-import { loadAllUsers } from "./features/user/userSlice";
 import {
   ComposePost,
   Followers,
@@ -26,54 +22,7 @@ import {
 
 const App = () => {
   const { themeMode, themeColor } = useSelector((state) => state.theme);
-  const dispatch = useDispatch();
-  const fetchPosts = async () => {
-    try {
-      const {
-        status,
-        data: { posts },
-      } = await PostsAPI();
-      if (status === 200) {
-        dispatch(loadPosts({ posts: posts }));
-      }
-    } catch (error) {
-      console.log(error.response.data.message);
-    }
-  };
 
-  const fetchNotifications = async () => {
-    try {
-      const {
-        status,
-        data: { notifications },
-      } = await AllNotificationsAPI();
-      if (status === 200) {
-        dispatch(loadAllNotifications({ notifications: notifications }));
-      }
-    } catch (error) {
-      console.log(error.response.data.message);
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const {
-        status,
-        data: { users },
-      } = await UsersAPI();
-      if (status === 200) {
-        dispatch(loadAllUsers({ users: users }));
-      }
-    } catch (error) {
-      console.log(error.response.data.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchPosts();
-    fetchNotifications();
-    fetchUsers();
-  }, []);
   return (
     <div
       className="App"

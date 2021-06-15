@@ -1,85 +1,141 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { apiUrl } from "../../api/ApiURL";
+
+const loginStatus = JSON.parse(localStorage.getItem("SocialMediaLoginUser"));
+
+export const loadLoggedInUser = createAsyncThunk(
+  "user/loadloggedInUser",
+  async ({ userCredential, password }) => {
+    const response = await axios.post(`${apiUrl}/login`, {
+      userCredential: userCredential,
+      password: password,
+    });
+    return response.data;
+  }
+);
+
+export const signupUser = createAsyncThunk(
+  "user/signupUser",
+  async ({ name, email, userName, password }) => {
+    const response = await axios.post(`${apiUrl}/signup`, {
+      name: name,
+      email: email,
+      userName: userName,
+      password: password,
+    });
+    return response.data;
+  }
+);
+
+export const loadUsersList = createAsyncThunk(
+  "users/loadUsersList",
+  async () => {
+    const response = await axios.get(`${apiUrl}/users`);
+    return response.data;
+  }
+);
 
 export const userSlice = createSlice({
   name: "user",
   initialState: {
-    loggedInUser: null,
-    notifications: [],
-    isUserLogin: false,
-    token: "",
-    usersList: null,
+    loggedInUserStatus: "idle",
+    loggedInUser: loginStatus?.user || null,
+    userLoginError: null,
+    isUserLogin: loginStatus?.isUserLogin || false,
+    token: loginStatus?.token || "",
+    userProfile: null,
+    usersList: [],
+    usersListStatus: "idle",
+    usersListError: null,
   },
   reducers: {
-    loadLoggedInUser: (state, action) => {
-      state.loggedInUser = action.payload.user;
-      state.isUserLogin = true;
-      state.token = action.payload.token;
-    },
     logoutUser: (state) => {
       state.loggedInUser = null;
+      state.loggedInUserStatus = "idle";
+      state.userLoginError = null;
       state.isUserLogin = false;
       state.token = "";
-    },
-    loadNotifications: (state, action) => {
-      state.notifications = action.payload.notifications;
-    },
-    editProfile: (state, action) => {
-      state.loggedInUser.name = action.payload.name;
-      state.loggedInUser.bio = action.payload.bio;
-      state.loggedInUser.website = action.payload.website;
-    },
-    loadAllUsers: (state, action) => {
-      state.usersList = action.payload.users;
-    },
-    addNewUserToUsersList: (state, action) => {
-      state.usersList.push(action.payload.user);
     },
     addUserDetails: (state, action) => {
       state.loggedInUser.bio = action.payload.bio;
       state.loggedInUser.website = action.payload.website;
       state.loggedInUser.profileImg = action.payload.profileImg;
       state.loggedInUser.coverImg = action.payload.coverImg;
-      const foundUserToUpadate = state.usersList.find(
-        (user) => user.userName === action.payload.userName
-      );
-      if (foundUserToUpadate) {
-        foundUserToUpadate.bio = action.payload.bio;
-        foundUserToUpadate.website = action.payload.website;
-        foundUserToUpadate.profileImg = action.payload.profileImg;
-        foundUserToUpadate.coverImg = action.payload.coverImg;
-        foundUserToUpadate.followers = [];
-        foundUserToUpadate.following = [];
-      }
     },
     followButtonClicked: (state, action) => {
-      state.loggedInUser.following.push(action.payload.newFollowing);
-
-      const followingUser = state.usersList.find(
-        (user) => user.userName === action.payload.newFollower.userName
+      state.loggedInUser.following = action.payload.user.following;
+      state.userProfile.followers = action.payload.userToFollow.followers;
+    },
+    loadUserProfile: (state, action) => {
+      state.userProfile = action.payload.user;
+    },
+  },
+  extraReducers: {
+    [loadLoggedInUser.pending]: (state, action) => {
+      state.loggedInUserStatus = "pending";
+    },
+    [loadLoggedInUser.fulfilled]: (state, action) => {
+      state.loggedInUser = action.payload.user;
+      state.isUserLogin = true;
+      state.token = action.payload.token;
+      localStorage.setItem(
+        "SocialMediaLoginUser",
+        JSON.stringify({
+          isUserLogin: true,
+          token: action.payload.token,
+          user: action.payload.user,
+          notifications: [],
+        })
       );
-      if (followingUser) {
-        followingUser.following.push(action.payload.newFollowing);
-      }
-
-      const foundUserToFollow = state.usersList.find(
-        (user) => user.userName === action.payload.newFollowing.userName
+      state.loggedInUserStatus = "fulfilled";
+    },
+    [loadLoggedInUser.rejected]: (state, action) => {
+      state.loggedInUserStatus = "error";
+      state.userLoginError = action.payload.message;
+    },
+    [loadUsersList.pending]: (state, action) => {
+      state.usersListStatus = "pending";
+    },
+    [loadUsersList.fulfilled]: (state, action) => {
+      state.usersList = action.payload.users;
+      state.usersListStatus = "fulfilled";
+    },
+    [loadUsersList.rejected]: (state, action) => {
+      state.usersListStatus = "error";
+      state.usersListError = action.payload.message;
+    },
+    [signupUser.pending]: (state, action) => {
+      state.loggedInUserStatus = "pending";
+    },
+    [signupUser.fulfilled]: (state, action) => {
+      state.loggedInUser = action.payload.user;
+      state.isUserLogin = true;
+      state.token = action.payload.token;
+      state.usersList.push(action.payload.user);
+      localStorage.setItem(
+        "SocialMediaLoginUser",
+        JSON.stringify({
+          isUserLogin: true,
+          token: action.payload.token,
+          user: action.payload.user,
+          notifications: [],
+        })
       );
-      if (foundUserToFollow) {
-        foundUserToFollow.followers.push(action.payload.newFollower);
-      }
+      state.loggedInUserStatus = "fulfilled";
+    },
+    [signupUser.rejected]: (state, action) => {
+      state.loggedInUserStatus = "error";
+      state.userLoginError = action.payload.message;
     },
   },
 });
 
 export const {
-  loadLoggedInUser,
   logoutUser,
-  editProfile,
-  loadNotifications,
-  loadAllUsers,
-  addNewUserToUsersList,
   addUserDetails,
   followButtonClicked,
+  loadUserProfile,
 } = userSlice.actions;
 
 export default userSlice.reducer;

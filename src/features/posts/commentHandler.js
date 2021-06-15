@@ -1,32 +1,54 @@
-import { v4 } from "uuid";
-import { updateNotification } from "../notifications/notificationSlice";
-import { commentAdded } from "./postsSlice";
+import axios from "axios";
+import { commentUpdated } from "./postsSlice";
+import { apiUrl } from "../../api/ApiURL";
 
-export const commentHandler = (postModal, reply, onClose, user, dispatch) => {
-  const newComment = {
-    _id: v4(),
-    userName: user.userName,
-    name: user.name,
-    profileImg: user.profileImg,
-    text: reply,
-    createdAt: new Date().toISOString(),
-  };
-  dispatch(commentAdded({ newComment: newComment, postId: postModal._id }));
-  const newNotification = {
-    _id: v4(),
-    postId: postModal._id,
-    createdAt: new Date().toISOString(),
-    profileImg: user.profileImg,
-    name: user.name,
-    type: "commented",
-  };
-  if (postModal.userName !== user.userName) {
-    dispatch(
-      updateNotification({
-        userName: postModal.userName,
-        newNotification: newNotification,
-      })
+export const commentHandler = async (
+  postModal,
+  reply,
+  onClose,
+  user,
+  token,
+  dispatch
+) => {
+  try {
+    const {
+      status,
+      data: { post },
+    } = await axios.post(
+      `${apiUrl}/posts/${postModal._id}/comment`,
+      {
+        userName: user.userName,
+        name: user.name,
+        profileImg: user.profileImg,
+        text: reply,
+      },
+      {
+        headers: { Authorization: token },
+      }
     );
+    if (status === 201) {
+      dispatch(commentUpdated({ updatedPost: post, postId: post._id }));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  if (postModal.userName !== user.userName) {
+    try {
+      await axios.post(
+        `${apiUrl}/notifications/${postModal.userId}`,
+        {
+          postId: postModal._id,
+          profileImg: user.profileImg,
+          name: user.name,
+          type: "commented",
+        },
+        {
+          headers: { Authorization: token },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
   onClose();
 };

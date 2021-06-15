@@ -16,6 +16,7 @@ import { GrAdd } from "react-icons/gr";
 import axios from "axios";
 import { addUserDetails } from "../features/user/userSlice";
 import { useNavigate } from "react-router";
+import { apiUrl } from "../api/ApiURL";
 
 export const GettingStarted = () => {
   const [bio, setBio] = useState("");
@@ -27,7 +28,7 @@ export const GettingStarted = () => {
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIu4v4dm223UFtdQXxFJ_jCpOn6LNKMsjfaw&usqp=CAU"
   );
 
-  const { loggedInUser } = useSelector((state) => state.user);
+  const { loggedInUser, token } = useSelector((state) => state.user);
   const { themeColor, themeMode } = useSelector((state) => state.theme);
 
   const dispatch = useDispatch();
@@ -69,16 +70,30 @@ export const GettingStarted = () => {
     }
   };
 
-  const profileDetailHandler = () => {
-    const user = {
-      userName: loggedInUser.userName,
-      bio: bio,
-      website: website,
-      profileImg: profileImg,
-      coverImg: coverImg,
-    };
-    dispatch(addUserDetails(user));
-    navigate("/");
+  const profileDetailHandler = async () => {
+    try {
+      const {
+        status,
+        data: { user },
+      } = await axios.post(
+        `${apiUrl}/user`,
+        {
+          bio: bio,
+          website: website,
+          profileImg: profileImg,
+          coverImg: coverImg,
+        },
+        {
+          headers: { Authorization: token },
+        }
+      );
+      if (status === 201) {
+        dispatch(addUserDetails(user));
+        navigate("/");
+      }
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
   };
 
   return (

@@ -13,17 +13,25 @@ import {
   Text,
   Box,
   Flex,
+  Spacer,
+  MenuButton,
+  Menu,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { loadPostOnModal } from "../features/posts/postsSlice";
-import { commentHandler } from "../features/posts";
+import { commentHandler, deleteComment } from "../features/posts";
 import { formatDistanceToNow } from "date-fns";
 import { PostCard } from "../components/PostCard";
+import { HiDotsVertical } from "react-icons/hi";
+import axios from "axios";
+import { apiUrl } from "../api/ApiURL";
 
 export const Post = () => {
   const { posts, postModal } = useSelector((state) => state.posts);
-  const { loggedInUser } = useSelector((state) => state.user);
+  const { loggedInUser, token } = useSelector((state) => state.user);
   const { themeColor, themeMode } = useSelector((state) => state.theme);
 
   const dispatch = useDispatch();
@@ -37,10 +45,27 @@ export const Post = () => {
   };
 
   const { postId } = useParams();
+  const navigate = useNavigate();
+
+  const authenticateUser = async () => {
+    try {
+      await axios.get(`${apiUrl}/user`, {
+        headers: { authorization: token },
+      });
+    } catch (error) {
+      console.log(error.response.data);
+      if (error.response.status === 401) {
+        navigate("/login");
+      }
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  useEffect(() => {
+    authenticateUser();
+  }, [token]);
 
   return (
     <Flex
@@ -105,6 +130,7 @@ export const Post = () => {
                     reply,
                     onClose,
                     loggedInUser,
+                    token,
                     dispatch
                   )
                 }
@@ -139,38 +165,110 @@ export const Post = () => {
                 }}
               >
                 {post.comments.map((comment) => {
-                  return (
-                    <Flex
-                      direction="row"
-                      p="2"
-                      align="center"
-                      key={comment._id}
-                    >
-                      <Avatar
-                        name="Kent Dodds"
-                        src={comment.profileImg}
-                        size="sm"
-                      />
-                      <Flex ml="3" direction="column" w="100%">
-                        <Flex direction="row">
-                          <Text fontWeight="bold">{comment.name}</Text>
-                          <Text fontSize="sm" color="gray.500" ml="3">
-                            @{comment.userName}
+                  if (
+                    post.userName === loggedInUser.userName ||
+                    comment.userName === loggedInUser.userName
+                  ) {
+                    return (
+                      <Flex
+                        direction="row"
+                        p="2"
+                        align="center"
+                        key={comment._id}
+                      >
+                        <Avatar
+                          name="Kent Dodds"
+                          src={comment.profileImg}
+                          size="sm"
+                        />
+                        <Flex ml="3" direction="column" w="100%">
+                          <Flex direction="row">
+                            <Text fontWeight="bold">{comment.name}</Text>
+                            <Text fontSize="sm" color="gray.500" ml="3">
+                              @{comment.userName}
+                            </Text>
+                            <Spacer />
+                            <Menu>
+                              <MenuButton
+                                as={Button}
+                                style={{
+                                  backgroundColor: `${themeColor[themeMode].bg}`,
+                                  color: `${themeColor[themeMode].color}`,
+                                }}
+                              >
+                                <HiDotsVertical />
+                              </MenuButton>
+                              <MenuList
+                                style={{
+                                  backgroundColor: `${themeColor[themeMode].bg}`,
+                                  color: `${themeColor[themeMode].color}`,
+                                }}
+                              >
+                                <MenuItem
+                                  style={{
+                                    backgroundColor: `${themeColor[themeMode].bg}`,
+                                    color: `${themeColor[themeMode].color}`,
+                                  }}
+                                  onClick={() =>
+                                    deleteComment(
+                                      post,
+                                      comment._id,
+                                      token,
+                                      dispatch
+                                    )
+                                  }
+                                >
+                                  Delete
+                                </MenuItem>
+                              </MenuList>
+                            </Menu>
+                          </Flex>
+                          <Text>{comment.text}</Text>
+                          <Text
+                            fontWeight="hairline"
+                            fontStyle="italic"
+                            fontSize="xs"
+                            textAlign="right"
+                          >
+                            {formatDistanceToNow(Date.parse(comment.createdAt))}{" "}
+                            ago
                           </Text>
                         </Flex>
-                        <Text>{comment.text}</Text>
-                        <Text
-                          fontWeight="hairline"
-                          fontStyle="italic"
-                          fontSize="xs"
-                          textAlign="right"
-                        >
-                          {formatDistanceToNow(Date.parse(comment.createdAt))}{" "}
-                          ago
-                        </Text>
                       </Flex>
-                    </Flex>
-                  );
+                    );
+                  } else
+                    return (
+                      <Flex
+                        direction="row"
+                        p="2"
+                        align="center"
+                        key={comment._id}
+                      >
+                        <Avatar
+                          name="Kent Dodds"
+                          src={comment.profileImg}
+                          size="sm"
+                        />
+                        <Flex ml="3" direction="column" w="100%">
+                          <Flex direction="row">
+                            <Text fontWeight="bold">{comment.name}</Text>
+                            <Text fontSize="sm" color="gray.500" ml="3">
+                              @{comment.userName}
+                            </Text>
+                          </Flex>
+                          <Text>{comment.text}</Text>
+                          <Text
+                            fontWeight="hairline"
+                            fontStyle="italic"
+                            fontSize="xs"
+                            textAlign="right"
+                          >
+                            {formatDistanceToNow(Date.parse(comment.createdAt))}{" "}
+                            ago
+                          </Text>
+                        </Flex>
+                      </Flex>
+                    );
                 })}
               </Flex>
             </Flex>

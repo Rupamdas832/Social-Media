@@ -22,6 +22,7 @@ export const Header = () => {
   const dispatch = useDispatch();
 
   const logoutHandler = () => {
+    localStorage.removeItem("SocialMediaLoginUser");
     dispatch(logoutUser());
   };
 
@@ -75,7 +76,12 @@ export const Header = () => {
           >
             <IoSettingsOutline />
           </MenuButton>
-          <MenuList>
+          <MenuList
+            style={{
+              backgroundColor: `${themeColor[themeMode].bg}`,
+              color: `${themeColor[themeMode].color}`,
+            }}
+          >
             <Link to="/settings/profile">
               <MenuItem
                 style={{

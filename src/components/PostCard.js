@@ -21,7 +21,7 @@ export const PostCard = ({ post, commentModalHandler }) => {
     createdAt,
   } = post;
 
-  const { loggedInUser } = useSelector((state) => state.user);
+  const { loggedInUser, token } = useSelector((state) => state.user);
   const { themeColor, themeMode } = useSelector((state) => state.theme);
 
   const dispatch = useDispatch();
@@ -61,7 +61,11 @@ export const PostCard = ({ post, commentModalHandler }) => {
         p="3"
         fontSize="xl"
       >
-        <Box onClick={() => likeHandler(isLiked, post, loggedInUser, dispatch)}>
+        <Box
+          onClick={() =>
+            likeHandler(isLiked, post, loggedInUser, token, dispatch)
+          }
+        >
           {isLiked ? <FcLike /> : <FcLikePlaceholder fontSize="2xl" />}
         </Box>
         <Text fontSize="sm" ml="1">

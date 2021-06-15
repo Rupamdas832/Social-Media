@@ -7,16 +7,16 @@ import {
   FormControl,
   FormLabel,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { composePost } from "../features/posts/postsSlice";
-import { v4 as uuid } from "uuid";
+import { composePost, resetComposeStatus } from "../features/posts/postsSlice";
 
 export const ComposePost = () => {
   const [content, setContent] = useState("");
 
-  const { loggedInUser } = useSelector((state) => state.user);
+  const { loggedInUser, token } = useSelector((state) => state.user);
+  const { composeStatus } = useSelector((state) => state.posts);
   const { userName, name, profileImg } = loggedInUser;
 
   const dispatch = useDispatch();
@@ -24,21 +24,26 @@ export const ComposePost = () => {
   const navigate = useNavigate();
 
   const composePostHandler = () => {
-    const newPost = {
-      _id: uuid(),
-      userName: userName,
-      name: name,
-      profileImg: profileImg,
-      content: content,
-      likes: [],
-      rePosts: 0,
-      comments: [],
-      createdAt: new Date().toISOString(),
-    };
-    dispatch(composePost({ newPost: newPost }));
-    setContent("");
-    navigate("/");
+    if (composeStatus === "idle") {
+      dispatch(
+        composePost({
+          userName,
+          name,
+          profileImg,
+          content,
+          token,
+        })
+      );
+    }
   };
+
+  useEffect(() => {
+    if (composeStatus === "fulfilled") {
+      dispatch(resetComposeStatus());
+      setContent("");
+      navigate("/");
+    }
+  }, [dispatch, composeStatus]);
   return (
     <Flex
       w="100vw"

@@ -6,17 +6,18 @@ import { Spacer } from "@chakra-ui/layout";
 import { Avatar } from "@chakra-ui/avatar";
 import { Button } from "@chakra-ui/button";
 import { Link, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { followUserHandler } from "../features/user/followUserHandler";
 
 export const Following = () => {
-  const { usersList, loggedInUser } = useSelector((state) => state.user);
+  const { userProfile, loggedInUser, token } = useSelector(
+    (state) => state.user
+  );
   const { themeColor, themeMode } = useSelector((state) => state.theme);
 
-  const { userNameFromParam } = useParams();
+  const dispatch = useDispatch();
 
-  const { following } = usersList.find(
-    (user) => user.userName === userNameFromParam
-  );
+  const { userNameFromParam } = useParams();
 
   return (
     <Flex
@@ -49,22 +50,25 @@ export const Following = () => {
           <IoMdPersonAdd />
         </Button>
       </Flex>
-      {following.length === 0 ? (
+      {userProfile.following.length === 0 ? (
         <Text mt="5" color="gray.500">
           No Following
         </Text>
       ) : (
-        following.map((user) => {
-          const { name, userName, profileImg, _id } = user;
+        userProfile.following.map((user) => {
+          const { name, userName, profileImg, _id, userId } = user;
+          const isFollowing = loggedInUser.following.find(
+            (user) => user.userName === userName
+          );
           return (
             <Flex
               w={["100vw", "100vw", "40vw", "40vw"]}
               direction="column"
               align="center"
-              key={_id}
               style={{
                 borderBottom: `1px solid ${themeColor[themeMode].border}`,
               }}
+              key={_id}
             >
               <Flex
                 direction="row"
@@ -74,24 +78,49 @@ export const Following = () => {
                 px="2"
                 py="3"
               >
-                <Avatar size="sm" name="Prosper Otemuyiwa" src={profileImg} />
+                <Link to={`/timeline/${userName}`}>
+                  <Avatar size="sm" name="Prosper Otemuyiwa" src={profileImg} />
+                </Link>
                 <Flex direction="column" px="2">
                   <Text fontWeight="semibold">{name}</Text>
                   <Text color="gray.500" fontWeight="light">
                     @{userName}
                   </Text>
                 </Flex>
-
                 <Spacer />
-                <Button
-                  colorScheme="teal"
-                  variant="outline"
-                  px="4"
-                  borderRadius="xl"
-                  fontSize="sm"
-                >
-                  Follow
-                </Button>
+                {isFollowing === undefined ? (
+                  <>
+                    {userName === loggedInUser.userName ? null : (
+                      <Button
+                        colorScheme="teal"
+                        variant="outline"
+                        px="4"
+                        borderRadius="xl"
+                        fontSize="sm"
+                        onClick={() =>
+                          followUserHandler(
+                            userId,
+                            loggedInUser,
+                            token,
+                            dispatch
+                          )
+                        }
+                      >
+                        Follow
+                      </Button>
+                    )}
+                  </>
+                ) : (
+                  <Button
+                    colorScheme="teal"
+                    variant="outline"
+                    px="4"
+                    borderRadius="xl"
+                    fontSize="sm"
+                  >
+                    Following
+                  </Button>
+                )}
               </Flex>
             </Flex>
           );

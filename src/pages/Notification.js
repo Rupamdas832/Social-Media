@@ -2,23 +2,44 @@ import { Text, Flex, Avatar } from "@chakra-ui/react";
 import { FcLike } from "react-icons/fc";
 import { IoPersonCircle } from "react-icons/io5";
 import { FaRegComment } from "react-icons/fa";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { formatDistanceToNow } from "date-fns";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { apiUrl } from "../api/ApiURL";
 
 export const Notification = () => {
-  const { loggedInUser } = useSelector((state) => state.user);
+  const { token } = useSelector((state) => state.user);
   const { themeColor, themeMode } = useSelector((state) => state.theme);
 
-  const { allUsersNotifications } = useSelector((state) => state.notifications);
-  const { items } = allUsersNotifications.find(
-    (item) => item.userId === loggedInUser._id
-  );
+  const { notifications } = useSelector((state) => state.notifications);
 
-  const sortedItems = items
-    .slice()
+  const sortedNotifications = notifications
+    ?.slice()
     .sort((a, b) => new Date(b["createdAt"]) - new Date(a["createdAt"]));
+
+  const navigate = useNavigate();
+
+  const authenticateUser = async () => {
+    try {
+      await axios.get(`${apiUrl}/user`, {
+        headers: { authorization: token },
+      });
+    } catch (error) {
+      console.log(error.response.data);
+      if (error.response.status === 401) {
+        navigate("/login");
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  useEffect(() => {
+    authenticateUser();
+  }, [token]);
 
   return (
     <Flex
@@ -31,12 +52,12 @@ export const Notification = () => {
       pb="20"
     >
       <Text>Notifications</Text>
-      {sortedItems.length === 0 ? (
+      {sortedNotifications.length === 0 ? (
         <Text fontSize="lg" color="gray.500" mt="5">
           No notifications
         </Text>
       ) : (
-        sortedItems.map((notification) => {
+        sortedNotifications.map((notification) => {
           const { profileImg, name, type, _id, createdAt, postId, userName } =
             notification;
           if (type === "liked") {

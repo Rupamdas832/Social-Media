@@ -12,25 +12,24 @@ import {
   AlertIcon,
   Alert,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LoginAPI, NotificationsAPI } from "../api/ApiCall";
 import Photo from "../assets/Asset880.svg";
-import {
-  loadNotifications,
-  loadLoggedInUser,
-} from "../features/user/userSlice";
+import { loadLoggedInUser } from "../features/user/userSlice";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { loadUserNotification } from "../features/notifications/notificationSlice";
 
 export const Login = () => {
-  const [userName, setUserName] = useState();
+  const [userCredential, setUserCredential] = useState();
   const [password, setPassword] = useState();
   const [show, setShow] = useState(false);
-  const [error, setError] = useState("");
   const handleClick = () => setShow(!show);
 
   const { themeColor, themeMode } = useSelector((state) => state.theme);
+  const { loggedInUserStatus, userLoginError, token } = useSelector(
+    (state) => state.user
+  );
 
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -39,58 +38,32 @@ export const Login = () => {
 
   const toast = useToast();
 
-  /*const fetchNotifications = async (_id) => {
-    try {
-      const {
-        status,
-        data: { notificationData },
-      } = await NotificationsAPI(_id);
-      if (status === 200) {
-        dispatch(loadNotifications({ notifications: notificationData.items }));
-        navigate(state?.from ? state.from : "/");
-        toast({
-          title: "Successfully logged In.",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-        });
-      }
-    } catch (error) {
-      setError(error.response.data.message);
-    }
-  };*/
-
-  const loginWithCredentials = async () => {
+  const loginWithCredentials = () => {
     toast({
       title: "Checking credentials.",
       status: "info",
       duration: 2000,
       isClosable: true,
     });
-    try {
-      const {
-        status,
-        data: { user, token },
-      } = await LoginAPI(userName, password);
-      if (status === 200) {
-        const newUser = {
-          user,
-          token,
-        };
-        dispatch(loadLoggedInUser(newUser));
-        //fetchNotifications(user._id);
-        navigate(state?.from ? state.from : "/");
-        toast({
-          title: "Successfully logged In.",
-          status: "success",
-          duration: 1000,
-          isClosable: true,
-        });
-      }
-    } catch (error) {
-      setError(error.response.data.message);
+    if (loggedInUserStatus === "idle") {
+      dispatch(
+        loadLoggedInUser({ userCredential: userCredential, password: password })
+      );
     }
   };
+
+  useEffect(() => {
+    if (loggedInUserStatus === "fulfilled") {
+      dispatch(loadUserNotification({ token: token }));
+      navigate(state?.from ? state.from : "/");
+      toast({
+        title: "Successfully logged In.",
+        status: "success",
+        duration: 1000,
+        isClosable: true,
+      });
+    }
+  }, [loggedInUserStatus]);
 
   return (
     <Flex
@@ -127,7 +100,7 @@ export const Login = () => {
           <Input
             type="text"
             placeholder="Enter username OR email"
-            onChange={(e) => setUserName(e.target.value)}
+            onChange={(e) => setUserCredential(e.target.value)}
           />
         </FormControl>
         <FormControl px="2" mt="2" isRequired>
@@ -151,10 +124,10 @@ export const Login = () => {
             </InputRightElement>
           </InputGroup>
         </FormControl>
-        {error && (
+        {userLoginError && (
           <Alert status="error">
             <AlertIcon />
-            {error}
+            {userLoginError}
           </Alert>
         )}
         <Button

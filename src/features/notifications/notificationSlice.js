@@ -1,32 +1,44 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { apiUrl } from "../../api/ApiURL";
+
+const loginStatus = JSON.parse(localStorage.getItem("SocialMediaLoginUser"));
+
+export const loadUserNotification = createAsyncThunk(
+  "notifications/loadUserNotification",
+  async ({ token }) => {
+    const response = await axios.get(`${apiUrl}/notifications`, {
+      headers: { authorization: token },
+    });
+    return response.data;
+  }
+);
 
 const notificationSlice = createSlice({
   name: "notifications",
   initialState: {
-    allUsersNotifications: null,
+    notifications: loginStatus?.notifications || null,
+    notificationStatus: "idle",
+    notificationError: null,
   },
-  reducers: {
-    loadAllNotifications: (state, action) => {
-      state.allUsersNotifications = action.payload.notifications;
+  extraReducers: {
+    [loadUserNotification.pending]: (state, action) => {
+      state.notificationStatus = "pending";
     },
-    updateNotification: (state, action) => {
-      const foundUserNoticationsByUserId = state.allUsersNotifications.find(
-        (item) => item.userName === action.payload.userName
+    [loadUserNotification.fulfilled]: (state, action) => {
+      state.notifications = action.payload.notifications;
+      const localData = JSON.parse(
+        localStorage.getItem("SocialMediaLoginUser")
       );
-      if (foundUserNoticationsByUserId) {
-        foundUserNoticationsByUserId.items.push(action.payload.newNotification);
-      }
+      localData.notifications = action.payload.notifications;
+      localStorage.setItem("SocialMediaLoginUser", JSON.stringify(localData));
+      state.notificationStatus = "fulfilled";
     },
-    addNewNotificationDataToList: (state, action) => {
-      state.allUsersNotifications.push(action.payload.newNotificationData);
+    [loadUserNotification.rejected]: (state, action) => {
+      state.notificationStatus = "error";
+      state.notificationError = action.payload.message;
     },
   },
 });
-
-export const {
-  loadAllNotifications,
-  updateNotification,
-  addNewNotificationDataToList,
-} = notificationSlice.actions;
 
 export default notificationSlice.reducer;
