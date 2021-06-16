@@ -69,7 +69,7 @@ export const postSlice = createSlice({
     },
     [loadPosts.rejected]: (state, action) => {
       state.postStatus = "error";
-      state.postError = action.payload.message;
+      state.postError = action.error.message;
     },
     [composePost.pending]: (state, action) => {
       state.composeStatus = "pending";
@@ -80,7 +80,7 @@ export const postSlice = createSlice({
     },
     [composePost.rejected]: (state, action) => {
       state.composeStatus = "error";
-      state.postError = action.payload.message;
+      state.postError = action.error.message;
     },
   },
 });

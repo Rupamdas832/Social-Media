@@ -92,7 +92,7 @@ export const userSlice = createSlice({
     },
     [loadLoggedInUser.rejected]: (state, action) => {
       state.loggedInUserStatus = "error";
-      state.userLoginError = action.payload.message;
+      state.userLoginError = action.error.message;
     },
     [loadUsersList.pending]: (state, action) => {
       state.usersListStatus = "pending";
@@ -103,7 +103,7 @@ export const userSlice = createSlice({
     },
     [loadUsersList.rejected]: (state, action) => {
       state.usersListStatus = "error";
-      state.usersListError = action.payload.message;
+      state.usersListError = action.error.message;
     },
     [signupUser.pending]: (state, action) => {
       state.loggedInUserStatus = "pending";
@@ -126,7 +126,7 @@ export const userSlice = createSlice({
     },
     [signupUser.rejected]: (state, action) => {
       state.loggedInUserStatus = "error";
-      state.userLoginError = action.payload.message;
+      state.userLoginError = action.error.message;
     },
   },
 });

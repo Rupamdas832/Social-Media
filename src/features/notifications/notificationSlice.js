@@ -36,7 +36,7 @@ const notificationSlice = createSlice({
     },
     [loadUserNotification.rejected]: (state, action) => {
       state.notificationStatus = "error";
-      state.notificationError = action.payload.message;
+      state.notificationError = action.error.message;
     },
   },
 });

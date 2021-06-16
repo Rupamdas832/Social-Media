@@ -35,6 +35,8 @@ export const Signup = () => {
   );
   const { notificationStatus } = useSelector((state) => state.notifications);
 
+  console.log(userLoginError);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
