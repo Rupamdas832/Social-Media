@@ -11,6 +11,7 @@ import {
   useToast,
   AlertIcon,
   Alert,
+  Grid,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,7 +48,7 @@ export const Login = () => {
     toast({
       title: "Checking credentials.",
       status: "info",
-      duration: 2000,
+      duration: 3000,
       isClosable: true,
     });
     if (loggedInUserStatus === "idle") {
@@ -137,15 +138,7 @@ export const Login = () => {
             {userLoginError}
           </Alert>
         )}
-        <Button
-          variant="outline"
-          my="5"
-          ml="2"
-          bg="gray.300"
-          onClick={fillGuestCredential}
-        >
-          Fill guest credentials
-        </Button>
+
         <Button
           colorScheme="teal"
           variant="solid"
@@ -161,6 +154,38 @@ export const Login = () => {
             here
           </Link>
         </Text>
+        <Button
+          colorScheme="teal"
+          size="sm"
+          variant="outline"
+          my="5"
+          ml="2"
+          bg="gray.300"
+          onClick={fillGuestCredential}
+          style={{
+            backgroundColor: `${themeColor[themeMode].bg}`,
+            color: `${themeColor[themeMode].color}`,
+          }}
+        >
+          Fill guest credentials
+        </Button>
+        <Text marginY="2" fontWeight="extrabold">
+          More credentials
+        </Text>
+        <Flex direction="column">
+          <Grid templateColumns="repeat(2, 1fr)" fontWeight="bold">
+            <Text>UserName</Text>
+            <Text>Password</Text>
+          </Grid>
+          <Grid templateColumns="repeat(2, 1fr)">
+            <Text>itsRealAman</Text>
+            <Text>Aman@123</Text>
+          </Grid>
+          <Grid templateColumns="repeat(2, 1fr)">
+            <Text>angelPriya</Text>
+            <Text>Priya@123</Text>
+          </Grid>
+        </Flex>
       </Flex>
     </Flex>
   );

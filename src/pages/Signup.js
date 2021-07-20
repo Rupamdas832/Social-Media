@@ -61,9 +61,7 @@ export const Signup = () => {
 
   useEffect(() => {
     if (loggedInUserStatus === "fulfilled") {
-      if (notificationStatus === "idle") {
-        dispatch(loadUserNotification({ token: token }));
-      }
+      dispatch(loadUserNotification({ token: token }));
       navigate("/getting-started");
       toast({
         title: "Successfully logged In.",

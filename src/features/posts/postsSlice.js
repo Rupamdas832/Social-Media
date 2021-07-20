@@ -7,6 +7,7 @@ export const loadPosts = createAsyncThunk("posts/loadPosts", async () => {
 
   return response.data;
 });
+
 export const composePost = createAsyncThunk(
   "posts/composePost",
   async ({ userName, name, profileImg, content, token }) => {
@@ -58,6 +59,11 @@ export const postSlice = createSlice({
     resetComposeStatus: (state, action) => {
       state.composeStatus = "idle";
     },
+    postsUpdated: (state, action) => {
+      state.posts = state.posts.filter(
+        (post) => post._id !== action.payload.removedPost._id
+      );
+    },
   },
   extraReducers: {
     [loadPosts.pending]: (state, action) => {
@@ -90,6 +96,7 @@ export const {
   commentUpdated,
   loadPostOnModal,
   resetComposeStatus,
+  postsUpdated,
 } = postSlice.actions;
 
 export default postSlice.reducer;

@@ -3,17 +3,22 @@ import { FcLike } from "react-icons/fc";
 import { IoPersonCircle } from "react-icons/io5";
 import { FaRegComment } from "react-icons/fa";
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { formatDistanceToNow } from "date-fns";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { apiUrl } from "../api/ApiURL";
+import { loadUserNotification } from "../features/notifications/notificationSlice";
 
 export const Notification = () => {
   const { token } = useSelector((state) => state.user);
   const { themeColor, themeMode } = useSelector((state) => state.theme);
 
-  const { notifications } = useSelector((state) => state.notifications);
+  const { notifications, notificationStatus } = useSelector(
+    (state) => state.notifications
+  );
+
+  const dispatch = useDispatch();
 
   const sortedNotifications = notifications
     ?.slice()
@@ -33,6 +38,12 @@ export const Notification = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (notificationStatus === "idle") {
+      dispatch(loadUserNotification({ token: token }));
+    }
+  }, [notificationStatus]);
 
   useEffect(() => {
     window.scrollTo(0, 0);

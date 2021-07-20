@@ -46,7 +46,7 @@ export const ComposePost = () => {
       toast({
         title: "Successfully posted",
         status: "success",
-        duration: 1000,
+        duration: 2000,
         isClosable: true,
       });
       navigate("/");
