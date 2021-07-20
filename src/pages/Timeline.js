@@ -123,7 +123,7 @@ export const Timeline = () => {
             <ModalCloseButton />
             <ModalBody>
               <Flex direction="row" p="2" align="center">
-                <Avatar name="Kent Dodds" src={postModal.profileImg} />
+                <Avatar name={postModal.name} src={postModal.profileImg} />
                 <Flex ml="3" direction="column">
                   <Text fontWeight="bold">{postModal.name}</Text>
                   <Text fontSize="sm">@{postModal.userName}</Text>
@@ -135,7 +135,7 @@ export const Timeline = () => {
             </ModalBody>
             <Flex direction="row" p="2" align="center">
               <Avatar
-                name="Kent Dodds"
+                name={loggedInUser.name}
                 src={loggedInUser.profileImg}
                 size="sm"
               />
@@ -211,7 +211,7 @@ export const Timeline = () => {
               <Spacer />
               <Avatar
                 size="xl"
-                name="Christian Nwamba"
+                name={userProfile.name}
                 src={userProfile.profileImg}
                 mt="-5"
                 border="2px"

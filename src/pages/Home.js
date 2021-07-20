@@ -92,7 +92,7 @@ export const Home = () => {
             <ModalCloseButton />
             <ModalBody>
               <Flex direction="row" p="2" align="center">
-                <Avatar name="Kent Dodds" src={postModal.profileImg} />
+                <Avatar name={postModal.name} src={postModal.profileImg} />
                 <Flex ml="3" direction="column">
                   <Text fontWeight="bold">{postModal.name}</Text>
                   <Text fontSize="sm">@{postModal.userName}</Text>
@@ -104,7 +104,7 @@ export const Home = () => {
             </ModalBody>
             <Flex direction="row" p="2" align="center">
               <Avatar
-                name="Kent Dodds"
+                name={loggedInUser.name}
                 src={loggedInUser.profileImg}
                 size="sm"
               />

@@ -6,6 +6,7 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +21,7 @@ export const ComposePost = () => {
   const { userName, name, profileImg } = loggedInUser;
 
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const navigate = useNavigate();
 
@@ -41,6 +43,12 @@ export const ComposePost = () => {
     if (composeStatus === "fulfilled") {
       dispatch(resetComposeStatus());
       setContent("");
+      toast({
+        title: "Successfully posted",
+        status: "success",
+        duration: 1000,
+        isClosable: true,
+      });
       navigate("/");
     }
   }, [dispatch, composeStatus]);
@@ -63,7 +71,7 @@ export const ComposePost = () => {
         <Flex direction="row" w="100%">
           <Avatar
             size="md"
-            name="Christian Nwamba"
+            name={name}
             src={profileImg}
             border="1px"
             borderColor="white"

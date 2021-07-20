@@ -39,7 +39,7 @@ export const PostCard = ({ post, commentModalHandler }) => {
     >
       <Link to={`/timeline/${userName}`}>
         <Flex direction="row" p="2" align="center">
-          <Avatar name="Kent Dodds" src={profileImg} />
+          <Avatar name={name} src={profileImg} />
           <Flex ml="3" direction="column">
             <Text fontWeight="bold">{name}</Text>
             <Text fontSize="sm">@{userName}</Text>
@@ -77,10 +77,10 @@ export const PostCard = ({ post, commentModalHandler }) => {
           {comments.length}
         </Text>
         <Spacer />
-        <AiOutlineRetweet />
+        {/*<AiOutlineRetweet />
         <Text fontSize="sm" ml="1">
           {rePosts}
-        </Text>
+        </Text>*/}
       </Flex>
     </Box>
   );

@@ -79,7 +79,7 @@ export const Following = () => {
                 py="3"
               >
                 <Link to={`/timeline/${userName}`}>
-                  <Avatar size="sm" name="Prosper Otemuyiwa" src={profileImg} />
+                  <Avatar size="sm" name={name} src={profileImg} />
                 </Link>
                 <Flex direction="column" px="2">
                   <Text fontWeight="semibold">{name}</Text>

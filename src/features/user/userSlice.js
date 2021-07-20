@@ -48,6 +48,7 @@ export const userSlice = createSlice({
     usersList: [],
     usersListStatus: "idle",
     usersListError: null,
+    search: "",
   },
   reducers: {
     logoutUser: (state) => {
@@ -69,6 +70,9 @@ export const userSlice = createSlice({
     },
     loadUserProfile: (state, action) => {
       state.userProfile = action.payload.user;
+    },
+    updateUserSearch: (state, action) => {
+      state.search = action.payload.search;
     },
   },
   extraReducers: {
@@ -136,6 +140,7 @@ export const {
   addUserDetails,
   followButtonClicked,
   loadUserProfile,
+  updateUserSearch,
 } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -75,7 +75,7 @@ export const Notification = () => {
                     <Text fontSize="xl" px="2">
                       <FcLike />
                     </Text>
-                    <Avatar size="sm" name="Kent Dodds" src={profileImg} />
+                    <Avatar size="sm" name={name} src={profileImg} />
                     <Text fontWeight="bold" px="2">
                       {name}{" "}
                       <span style={{ fontWeight: "lighter" }}>
@@ -109,7 +109,7 @@ export const Notification = () => {
                     <Text fontSize="xl" px="2">
                       <FaRegComment />
                     </Text>
-                    <Avatar size="sm" name="Kola Tioluwani" src={profileImg} />
+                    <Avatar size="sm" name={name} src={profileImg} />
                     <Text fontWeight="bold" px="2">
                       {name}{" "}
                       <span style={{ fontWeight: "lighter" }}>
@@ -143,7 +143,7 @@ export const Notification = () => {
                     <Text fontSize="2xl" px="2" color="teal">
                       <IoPersonCircle />
                     </Text>
-                    <Avatar size="sm" name="Dan Abrahmov" src={profileImg} />
+                    <Avatar size="sm" name={name} src={profileImg} />
                     <Text fontWeight="bold" px="2">
                       {name}{" "}
                       <span style={{ fontWeight: "lighter" }}>{type} you</span>

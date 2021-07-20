@@ -21,8 +21,8 @@ import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { loadUserNotification } from "../features/notifications/notificationSlice";
 
 export const Login = () => {
-  const [userCredential, setUserCredential] = useState();
-  const [password, setPassword] = useState();
+  const [userCredential, setUserCredential] = useState("");
+  const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
@@ -37,6 +37,11 @@ export const Login = () => {
   const dispatch = useDispatch();
 
   const toast = useToast();
+
+  const fillGuestCredential = () => {
+    setUserCredential("rupam832");
+    setPassword("Rupam@123");
+  };
 
   const loginWithCredentials = () => {
     toast({
@@ -101,6 +106,7 @@ export const Login = () => {
             type="text"
             placeholder="Enter username OR email"
             onChange={(e) => setUserCredential(e.target.value)}
+            value={userCredential}
           />
         </FormControl>
         <FormControl px="2" mt="2" isRequired>
@@ -111,6 +117,7 @@ export const Login = () => {
               type={show ? "text" : "password"}
               placeholder="Enter password"
               onChange={(e) => setPassword(e.target.value)}
+              value={password}
             />
             <InputRightElement width="4.5rem">
               <Button
@@ -130,6 +137,15 @@ export const Login = () => {
             {userLoginError}
           </Alert>
         )}
+        <Button
+          variant="outline"
+          my="5"
+          ml="2"
+          bg="gray.300"
+          onClick={fillGuestCredential}
+        >
+          Fill guest credentials
+        </Button>
         <Button
           colorScheme="teal"
           variant="solid"
