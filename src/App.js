@@ -1,3 +1,4 @@
+import { useToast } from "@chakra-ui/react";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
@@ -22,6 +23,7 @@ import {
 
 const App = () => {
   const { themeMode, themeColor } = useSelector((state) => state.theme);
+  const toast = useToast();
 
   return (
     <div

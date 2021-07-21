@@ -21,6 +21,8 @@ import {
   Spacer,
   Divider,
   Spinner,
+  ModalHeader,
+  useToast,
 } from "@chakra-ui/react";
 import { loadPostOnModal } from "../features/posts/postsSlice";
 import { PostCard } from "../components/PostCard";
@@ -28,8 +30,10 @@ import { followUserHandler } from "../features/user/followUserHandler";
 import axios from "axios";
 import { loadUserProfile } from "../features/user/userSlice";
 import { apiUrl } from "../api/ApiURL";
+import { unFollowUserHandler } from "../features/user/unFollowUserHandler";
 
 export const Timeline = () => {
+  const [selectedUser, setSelectedUser] = useState({});
   const { loggedInUser, token, userProfile } = useSelector(
     (state) => state.user
   );
@@ -41,9 +45,15 @@ export const Timeline = () => {
   const [reply, setReply] = useState("");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
 
   const { userNameFromParam } = useParams();
   const navigate = useNavigate();
+
+  const openUnfollowModal = (user) => {
+    setSelectedUser(user);
+    onOpen();
+  };
 
   const fetchUser = async () => {
     try {
@@ -174,6 +184,40 @@ export const Timeline = () => {
           </ModalContent>
         </Modal>
       )}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Flex direction="row">
+              <Text>Unfollow</Text>
+              <Text fontWeight="bold" marginLeft="3">
+                @{selectedUser.userName}
+              </Text>
+            </Flex>
+          </ModalHeader>
+
+          <ModalCloseButton />
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button
+              colorScheme="teal"
+              onClick={() =>
+                unFollowUserHandler(
+                  selectedUser._id,
+                  onClose,
+                  token,
+                  dispatch,
+                  toast
+                )
+              }
+            >
+              Unfollow
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Flex>
         {userProfile === null ? (
           <Spinner
@@ -261,14 +305,19 @@ export const Timeline = () => {
                           userProfile._id,
                           loggedInUser,
                           token,
-                          dispatch
+                          dispatch,
+                          toast
                         )
                       }
                     >
                       Follow
                     </Button>
                   ) : (
-                    <Button colorScheme="teal" variant="outline">
+                    <Button
+                      colorScheme="teal"
+                      variant="outline"
+                      onClick={() => openUnfollowModal(userProfile)}
+                    >
                       Following
                     </Button>
                   )}

@@ -67,6 +67,15 @@ export const userSlice = createSlice({
     followButtonClicked: (state, action) => {
       state.loggedInUser.following = action.payload.user.following;
       state.userProfile.followers = action.payload.userToFollow.followers;
+      state.usersList = state.usersList.map((selectedUser) => {
+        if (selectedUser.userName === action.payload.userToFollow.userName) {
+          selectedUser.followers = action.payload.userToFollow.followers;
+        }
+        if (selectedUser.userName === action.payload.user.userName) {
+          selectedUser.following = action.payload.user.following;
+        }
+        return selectedUser;
+      });
     },
     loadUserProfile: (state, action) => {
       state.userProfile = action.payload.user;

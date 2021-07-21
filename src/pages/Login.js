@@ -13,7 +13,7 @@ import {
   Alert,
   Grid,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Photo from "../assets/Asset880.svg";
@@ -25,6 +25,9 @@ export const Login = () => {
   const [userCredential, setUserCredential] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
+
+  const toastRef = useRef();
+
   const handleClick = () => setShow(!show);
 
   const { themeColor, themeMode } = useSelector((state) => state.theme);
@@ -45,10 +48,9 @@ export const Login = () => {
   };
 
   const loginWithCredentials = () => {
-    toast({
+    toastRef.current = toast({
       title: "Checking credentials.",
       status: "info",
-      duration: 3000,
       isClosable: true,
     });
     if (loggedInUserStatus === "idle") {
@@ -62,6 +64,9 @@ export const Login = () => {
     if (loggedInUserStatus === "fulfilled") {
       dispatch(loadUserNotification({ token: token }));
       navigate(state?.from ? state.from : "/");
+      if (toastRef.current) {
+        toast.close(toastRef.current);
+      }
       toast({
         title: "Successfully logged In.",
         status: "success",

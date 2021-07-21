@@ -6,8 +6,15 @@ export const followUserHandler = async (
   userIdToFollow,
   loggedInUser,
   token,
-  dispatch
+  dispatch,
+  toast
 ) => {
+  toast({
+    title: "Following user",
+    status: "success",
+    duration: 2000,
+    isClosable: true,
+  });
   try {
     const {
       status,

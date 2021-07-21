@@ -14,7 +14,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { GrAdd } from "react-icons/gr";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { apiUrl } from "../api/ApiURL";
 import { addUserDetails } from "../features/user/userSlice";
 
@@ -204,6 +204,9 @@ export const ProfileEdit = () => {
         >
           Save
         </Button>
+        <Link to={`/timeline/${loggedInUser.userName}`}>
+          <Button variant="ghost">Cancel</Button>
+        </Link>
       </Flex>
     </Flex>
   );
